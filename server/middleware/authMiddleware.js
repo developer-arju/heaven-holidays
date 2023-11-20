@@ -21,10 +21,11 @@ export const protect = asyncHandler(async (req, res, next) => {
           req.userId = decode.id;
           return next();
         } else {
-          res.status(403).json({ message: "user has been blocked" });
+          return res.status(403).json({ message: "user has been blocked" });
         }
       } catch (error) {
-        res.status(403).json({ message: error?.message || error });
+        res.status(403);
+        throw error;
       }
     }
   }

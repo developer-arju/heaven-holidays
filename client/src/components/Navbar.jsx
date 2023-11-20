@@ -82,7 +82,9 @@ const Navbar = ({ scrollToFeaturedSection }) => {
               <NavLink to="/properties" className="hover:scale-110">
                 Rooms & Resorts
               </NavLink>
-              <li className="hover:scale-110">Contact Us</li>
+              <NavLink to="/connect" className="hover:scale-110">
+                Contact Us
+              </NavLink>
             </ul>
           </div>
           <div className="lg:col-span-1 flex justify-center items-center">
@@ -273,7 +275,7 @@ const Navbar = ({ scrollToFeaturedSection }) => {
                   {/* <!-- Menu Item Reservations --> */}
                   <li>
                     <NavLink
-                      to="#"
+                      to="/connect"
                       className="group relative flex items-center gap-2.5 py-2 px-4 font-medium duration-300 ease-in-out"
                     >
                       Contact Us

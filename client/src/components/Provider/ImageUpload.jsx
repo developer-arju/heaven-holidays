@@ -90,7 +90,7 @@ const ImageUpload = ({
 
     let image = document.createElement("img");
     image.classList.add("w-24", "h-full", "object-cover");
-    image.src = src;
+    image.src = `http://localhost:8000/${src}`;
     preview.appendChild(image);
 
     let closeIcon = document.createElement("span");
@@ -103,7 +103,7 @@ const ImageUpload = ({
       const previewImg = previewDiv.querySelector("img");
       setImageUrls(
         imageUrls.filter((url) => {
-          if (url !== previewImg.src) {
+          if (url !== previewImg.src.split("/").slice(3).join("/")) {
             return url;
           }
         })

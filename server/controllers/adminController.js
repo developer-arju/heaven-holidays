@@ -45,3 +45,20 @@ export const authenticate = asyncHandler(async (req, res) => {
     throw new Error("invalid credential");
   }
 });
+
+// export const updateAdminPassword = asyncHandler(async (req, res) => {
+//   const { password, authId } = req.body;
+//   try {
+//     const register = await Admin.findOne({ authId });
+//     if (register) {
+//       register.password = password;
+//       return await register
+//         .save()
+//         .then(() => res.status(200).send("password changed"));
+//     }
+//     throw new Error("operation failed");
+//   } catch (error) {
+//     res.status(400);
+//     throw error;
+//   }
+// });

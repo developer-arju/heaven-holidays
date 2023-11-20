@@ -14,7 +14,7 @@ const SearchComponent = ({ placeholder, setSearch }) => {
   };
 
   return (
-    <div className="bg-bg-1/60 py-16 flex justify-center font-body">
+    <div className="bg-bg-1/60 pt-20 pb-12 flex justify-center font-body">
       <div className="flex justify-center w-4/6 items-center gap-4 px-6 py-2 rounded-full bg-white shadow-lg">
         <input
           type="text"

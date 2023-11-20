@@ -35,6 +35,7 @@ const Properties = () => {
       setAccessToken(authData.token);
       const response = await getRequest("/provider/property");
       if (response.data) {
+        console.log(response.data);
         setProperties(response.data);
       }
       if (response.error) {

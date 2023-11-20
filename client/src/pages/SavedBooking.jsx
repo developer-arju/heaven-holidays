@@ -1,18 +1,48 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { getRequest, setAccessToken, putRequest } from "../utils/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import FavouritePackage from "../components/favouritePackage";
+import { toast } from "react-toastify";
+import { ClockLoader } from "react-spinners";
+import EmptyTemplate from "../components/EmptyTemplate";
 
 const SavedBooking = () => {
+  const { authData } = useSelector((state) => state.user);
+  const [loading, setLoading] = useState(false);
   const [displayItem, setDisplayItem] = useState("packages");
   const [packages, setPackages] = useState([]);
   const [rooms, setRooms] = useState([]);
 
   useEffect(() => {
     (async () => {
-      if (displayItem === "packages") {
+      setLoading(true);
+      setAccessToken(authData.token);
+      const { data, error } = await getRequest("/users/favourites/packages");
+      if (data) {
+        setPackages(data);
       }
+      if (error) {
+        console.log(error);
+        toast.error(error.message);
+      }
+      setLoading(false);
     })();
-  }, [displayItem]);
+  }, []);
+
+  const removeHandler = async (id) => {
+    setAccessToken(authData.token);
+    const { data, error } = await putRequest("/users/favourites/remove", {
+      packageId: id,
+    });
+    if (data) {
+      setPackages(data.packages);
+    }
+    if (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="relative bg-bg-1/60 min-h-screen py-12 w-full">
@@ -40,32 +70,30 @@ const SavedBooking = () => {
             Rooms & Resorts
           </h2>
         </div>
-        <section className="text-gray-600 font-body">
-          <h1 className="text-center font-bold text-[24px] py-4 underline underline-offset-4 text-gray-400">
+        <section className="text-gray-600 font-body mb-4">
+          <h1 className="py-4 text-gray-400 font-medium font-title text-center text-[24px]">
             Favourites
           </h1>
-          <div className="container px-5 py-6 mx-auto">
-            <div className="flex flex-wrap">
-              <div className="lg:w-1/3 md:w-1/2 w-full bg-neutral-50 rounded border border-bg-1">
-                <a className="block relative h-48 rounded overflow-hidden">
-                  <img
-                    alt="ecommerce"
-                    className="object-cover object-center w-full h-full block"
-                    src="https://dummyimage.com/420x260"
-                  />
-                </a>
-                <div className="mt-4 px-4 pb-4">
-                  <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">
-                    CATEGORY
-                  </h3>
-                  <h2 className="text-gray-900 title-font text-lg font-medium">
-                    The Catalyzer
-                  </h2>
-                  <p className="mt-1">$16.00</p>
-                </div>
-              </div>
+          {loading ? (
+            <div className="w-full h-64 flex justify-center items-center">
+              <ClockLoader color="#36d7b7" size={100} />
             </div>
-          </div>
+          ) : (
+            <div className="container flex flex-wrap justify-center gap-4 py-6 mx-auto">
+              {displayItem === "packages" && packages.length < 1 ? (
+                <EmptyTemplate />
+              ) : (
+                packages?.map((doc) => (
+                  <FavouritePackage
+                    key={doc._id}
+                    doc={doc}
+                    removeHandler={removeHandler}
+                  />
+                ))
+              )}
+              {/* {displayItem === "rooms" && } */}
+            </div>
+          )}
         </section>
       </main>
       <div className="absolute left-0 right-0 bottom-0 bg-bg-1">

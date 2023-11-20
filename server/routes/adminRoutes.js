@@ -17,6 +17,7 @@ import { adminProtect } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 // router.post("/", registerAdmin);
+// router.post("/update-password", updateAdminPassword);
 router.post("/auth", authenticate);
 router.get("/users", adminProtect, getAllUsers);
 router.get("/providers", adminProtect, getAllProviders);

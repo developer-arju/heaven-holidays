@@ -29,9 +29,7 @@ export const addProperty = asyncHandler(async (req, res) => {
       propertyPincode,
       propertyImages: propertyImages.map(
         (img) =>
-          `http://localhost:8000${img.destination.replace(/^.*?public/, "")}/${
-            img.filename
-          }`
+          `${img.destination.split("/").slice(2).join("/")}/${img.filename}`
       ),
     });
     if (newProperty) {
@@ -74,7 +72,7 @@ export const addPriceOption = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc Get All Properties
+// @desc Get All Properties of Provider
 // route GET /api/provider/property
 // @access Private
 export const getAllProperties = asyncHandler(async (req, res) => {
@@ -150,53 +148,47 @@ export const updatePropertyDetails = asyncHandler(async (req, res) => {
     activeImages,
   } = req.body;
 
-  const mergedImages = [
-    ...activeImages,
-    ...newImages.map((img) => {
-      return `http://localhost:8000${img.destination.replace(
-        /^.*?public/,
-        ""
-      )}/${img.filename}`;
-    }),
-  ];
+  const mergedImages = activeImages
+    ? [
+        ...activeImages,
+        ...newImages.map((img) => {
+          return `${img.destination.split("/").slice(2).join("/")}/${
+            img.filename
+          }`;
+        }),
+      ]
+    : [
+        ...newImages.map((img) => {
+          return `${img.destination.split("/").slice(2).join("/")}/${
+            img.filename
+          }`;
+        }),
+      ];
   try {
-    if (newImages.length > 0) {
-      await Property.updateOne(
-        { _id: id },
-        {
-          $set: {
-            propertyName,
-            propertyLocation,
-            propertyAddress,
-            propertyPincode,
-            propertyImages: mergedImages,
-          },
-        }
-      );
-    } else {
-      await Property.updateOne(
-        { _id: id },
-        {
-          $set: {
-            propertyName,
-            propertyLocation,
-            propertyAddress,
-            propertyPincode,
-            propertyImages: activeImages.length > 0 && [...activeImages],
-          },
-        }
-      );
-    }
+    await Property.updateOne(
+      { _id: id },
+      {
+        $set: {
+          propertyName,
+          propertyLocation,
+          propertyAddress,
+          propertyPincode,
+          propertyImages: mergedImages,
+        },
+      }
+    );
+
     if (deletedImages !== undefined) {
-      deletedImages.forEach(async (imgUrl) => {
-        const splitName = imgUrl.split("/");
-        const imgName = splitName[splitName.length - 1];
-        unlink(`server/public/images/property/${imgName}`, (err) => {
-          if (err) {
-            console.log(err);
-            throw err;
+      deletedImages.forEach((imgName) => {
+        unlink(
+          `server/public/images/property/${imgName.split("/").slice(-1)[0]}`,
+          (err) => {
+            if (err) {
+              console.log(err);
+              throw err;
+            }
           }
-        });
+        );
       });
     }
   } catch (error) {
@@ -214,7 +206,7 @@ export const getProperties = asyncHandler(async (req, res) => {
   try {
     const properties = await Property.find({ isAvailable: true }).populate(
       "providerId",
-      "brandName"
+      "-_id -password"
     );
     if (!properties) throw new Error("data not found");
 

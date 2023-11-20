@@ -10,6 +10,7 @@ import BookPackages from "./pages/BookPackages";
 import Bookings from "./pages/Bookings";
 import PackgeDetails from "./pages/PackgeDetails";
 import SavedBooking from "./pages/SavedBooking";
+import ContactPage from "./pages/ContactPage";
 
 // provider
 import ProviderAuth from "./pages/Provider/ProviderAuth";
@@ -34,6 +35,7 @@ import ProviderList from "./pages/Admin/ProviderList";
 import UsersList from "./pages/Admin/UsersList";
 import AdminBookings from "./pages/Admin/Bookings";
 import PackageListingAdmin from "./pages/Admin/Packages";
+import Messages from "./pages/Admin/Messages";
 
 /** Components */
 import NotFound from "./components/NotFound";
@@ -53,11 +55,12 @@ function App() {
         <Route path="packages" element={<Packages />} />
         <Route path="packages/details/:packageId" element={<PackgeDetails />} />
         <Route path="properties" element={<ResortsAndHotels />} />
+        <Route path="connect" element={<ContactPage />} />
 
         <Route element={<PrivateRoutes />}>
           <Route path="packages/book/:packageId" element={<BookPackages />} />
           <Route path="bookings" element={<Bookings />} />
-          <Route path="saved" element={<SavedBooking />} />{" "}
+          <Route path="saved" element={<SavedBooking />} />
         </Route>
 
         <Route element={<UserAuthenticated />}>
@@ -103,6 +106,7 @@ function App() {
           <Route path="users" element={<UsersList />} />
           <Route path="bookings" element={<AdminBookings />} />
           <Route path="packages" element={<PackageListingAdmin />} />
+          <Route path="messages" element={<Messages />} />
         </Route>
         <Route path="auth" element={<AdminAuth />} />
       </Route>

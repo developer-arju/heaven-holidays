@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getRequest } from "../utils/axios";
+import { getRequest, postRequest, setAccessToken } from "../utils/axios";
 import { ToastContainer, toast } from "react-toastify";
 import {
   BsFillCaretLeftFill,
@@ -12,9 +12,11 @@ import { MdToday } from "react-icons/md";
 import { GoDotFill } from "react-icons/go";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useSelector } from "react-redux";
 
 const PackgeDetails = () => {
   const { packageId } = useParams();
+  const { authData } = useSelector((state) => state.user);
   const [coverImgIndex, setCoverImgIndex] = useState(0);
   const [packageData, setPackageData] = useState(null);
   const [currDayIdx, setCurrDayIdx] = useState(0);
@@ -48,7 +50,20 @@ const PackgeDetails = () => {
     setCoverImgIndex((prev) => prev + 1);
   };
 
-  console.log(packageData);
+  const favHandler = async (e) => {
+    e.stopPropagation();
+    setAccessToken(authData.token);
+    const { data, error } = await postRequest("/users/packages/save", {
+      packageId,
+    });
+    if (data) {
+      toast.success(data.message);
+    }
+    if (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="relative min-h-screen pt-12 pb-24 bg-bg-1/60 ">
       <Navbar />
@@ -120,7 +135,10 @@ const PackgeDetails = () => {
               >
                 Book Now
               </Link>
-              <button className=" text-green-500 ring-1 ring-green-500 bg-gray-100 py-2 px-3 focus:outline-none hover:bg-green-500 hover:text-white rounded-full text-lg">
+              <button
+                onClick={favHandler}
+                className=" text-green-500 ring-1 ring-green-500 bg-gray-100 py-2 px-3 focus:outline-none hover:bg-green-500 hover:text-white rounded-full text-lg"
+              >
                 <BsFillHeartFill />
               </button>
             </div>

@@ -53,3 +53,18 @@ export const getOrderDetails = async (orderId) => {
     return error;
   }
 };
+
+export const refundPayment = async (paymentId, bookingId, userId) => {
+  try {
+    const response = await paymentInstance.payments.refund(paymentId, {
+      speed: "normal",
+      notes: {
+        user: userId,
+      },
+      receipt: bookingId,
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

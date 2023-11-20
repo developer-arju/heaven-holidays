@@ -5,6 +5,7 @@ import {
   googleSign,
 } from "../controllers/userController.js";
 import {
+  getBannerItems,
   getLatest,
   getPackages,
   getSinglePackageDetails,
@@ -16,6 +17,11 @@ import {
 } from "../controllers/bookingController.js";
 import { getProperties } from "../controllers/propertyController.js";
 import { protect } from "../middleware/authMiddleware.js";
+import {
+  addFavouritePackage,
+  findAllFavouritePackages,
+  removeFavPackage,
+} from "../controllers/favouriteController.js";
 
 const router = express.Router();
 
@@ -25,9 +31,13 @@ router.get("/bookings", protect, getUserBookings);
 router.get("/booking/:packageId", getSinglePackageDetails);
 router.get("/packages", getPackages);
 router.get("/properties", getProperties);
+router.get("/banners", getBannerItems);
 router.post("/new/package", protect, createBooking);
 router.post("/new/package/verify", protect, verificationHandler);
 router.post("/auth", authTokenGenerate);
 router.post("/auth/google", googleSign);
+router.post("/packages/save", protect, addFavouritePackage);
+router.get("/favourites/packages", protect, findAllFavouritePackages);
+router.put("/favourites/remove", protect, removeFavPackage);
 
 export default router;

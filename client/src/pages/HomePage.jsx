@@ -126,7 +126,7 @@ const HomePage = () => {
           </h2>
         </div>
         {newPackages?.map((doc) => (
-          <FeaturedRow doc={doc} />
+          <FeaturedRow doc={doc} key={doc._id} />
         ))}
         <div className="text-black bg-bg-1">
           <Footer />

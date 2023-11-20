@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const propertySchema = mongoose.Schema(
   {
     providerId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Provider",
       required: true,
     },
     propertyName: {

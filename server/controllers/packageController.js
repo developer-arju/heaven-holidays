@@ -211,6 +211,21 @@ export const toggleAvailability = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc Send Banner Items
+// route GET /api/users/banners
+// @access Public
+export const getBannerItems = asyncHandler(async (req, res) => {
+  try {
+    const banners = await Package.find({ banner: true });
+    if (!banners) throw new Error("no packages set as banner");
+
+    return res.status(200).json(banners);
+  } catch (error) {
+    res.status(403);
+    throw error;
+  }
+});
+
 // @desc retrive package info
 export function getPackage(id) {
   return new Promise(async (resolve, reject) => {

@@ -136,7 +136,13 @@ const UsersList = () => {
                   <tr className="border-b" key={user._id}>
                     <td className="whitespace-nowrap px-2 py-4 font-medium">
                       <img
-                        src={user.avatar ? user.avatar : userAvatar}
+                        src={
+                          user.avatar
+                            ? user.avatar.includes("https")
+                              ? user.avatar
+                              : `http://localhost:8000/images/avatar/${user.avatar}`
+                            : userAvatar
+                        }
                         alt=""
                         className="aspect-square w-10 mx-auto rounded-full"
                       />

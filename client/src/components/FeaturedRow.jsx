@@ -30,7 +30,7 @@ const FeaturedRow = ({ doc }) => {
           <div className="flex gap-2.5 items-center">
             <button
               onClick={() => navigate(`/packages/details/${doc._id}`)}
-              className="px-5 py-2 font-body rounded-md bg-blue-400 hover:bg-blue-800 hover:skew-x-3 hover:-skew-y-3 hover:shadow-2xl mb-4 text-white"
+              className="px-5 py-2 font-body rounded-md bg-blue-400 hover:bg-blue-800  hover:shadow-2xl mb-4 text-black hover:text-white"
             >
               see more
             </button>
