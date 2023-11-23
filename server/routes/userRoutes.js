@@ -3,6 +3,9 @@ import {
   registerUser,
   authTokenGenerate,
   googleSign,
+  resetUserPassword,
+  verifyResetLink,
+  updatePassword,
 } from "../controllers/userController.js";
 import {
   getBannerItems,
@@ -22,11 +25,15 @@ import {
   findAllFavouritePackages,
   removeFavPackage,
 } from "../controllers/favouriteController.js";
+import { loadClientMessages } from "../controllers/messageController.js";
 
 const router = express.Router();
 
 router.post("/", registerUser);
 router.get("/latest", getLatest);
+router.post("/reset", resetUserPassword);
+router.get("/reset/:id/:token", verifyResetLink);
+router.post("/update-password", updatePassword);
 router.get("/bookings", protect, getUserBookings);
 router.get("/booking/:packageId", getSinglePackageDetails);
 router.get("/packages", getPackages);
@@ -39,5 +46,6 @@ router.post("/auth/google", googleSign);
 router.post("/packages/save", protect, addFavouritePackage);
 router.get("/favourites/packages", protect, findAllFavouritePackages);
 router.put("/favourites/remove", protect, removeFavPackage);
+router.get("/messages", protect, loadClientMessages);
 
 export default router;

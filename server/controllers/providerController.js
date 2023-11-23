@@ -71,7 +71,15 @@ export const sendResetLink = asyncHandler(async (req, res) => {
       };
       const token = jwt.sign(payload, secret, { expiresIn: "10m" });
       const url = `http://localhost:3000/provider/reset/${provider._id}?token=${token}`;
-      const result = await sendMail(provider.email, url);
+      const mailOptions = {
+        from: "Heaven Holidays <heavenholidays@heaven-holidays.iam.gserviceaccount.com>",
+        to: `${email}`,
+        subject: "Reset Password",
+        text: `Reset Your Provider Account Password\n follow this link ${url}`,
+        html: `<h2>Reset provider account password</h2><a style="padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 4px;" href=${url} target="_blank">Click here</a>`,
+      };
+
+      const result = await sendMail(mailOptions);
       if (!result) throw new Error("Error send url");
       return res.status(200).send("password rest link send to your email");
     }

@@ -1,28 +1,54 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { socket } from "../socket";
+import { getRequest, setAccessToken } from "../utils/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { FcCallback, FcAssistant } from "react-icons/fc";
 import { MdAlternateEmail, MdLocationCity, MdSend } from "react-icons/md";
+import { GoDotFill } from "react-icons/go";
 
-const ContactPage = () => {
+const ContactPage = ({ socket }) => {
   const { authData } = useSelector((state) => state.user);
+  const [messages, setMessages] = useState(null);
+  const [adminStatus, setAdminStatus] = useState(false);
+  const { _id, token } = authData;
   const [message, setMessage] = useState("");
 
-  // useEffect(() => {
-  //   socket.on("connect", (socket) => {
-  //     console.log("socket connected");
-  //   });
-  //   socket.on("disconnect", (socket) => {
-  //     console.log("socket disconnected");
-  //   });
-  // }, []);
+  useEffect(() => {
+    socket.on("clientResponse", (chat) => {
+      setMessages(chat.messages);
+    });
+    socket.on("curr-status", (status) => {
+      setAdminStatus(status);
+    });
+    socket.on("from-admin", (data) => {
+      setMessages(data.messages);
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    const msgBox = document.querySelector("#msgBox");
+    msgBox?.scrollTo(0, msgBox.scrollHeight);
+  }, [messages]);
+
+  useEffect(() => {
+    (async () => {
+      setAccessToken(authData.token);
+      const { data, error } = await getRequest("/users/messages");
+      setMessages(data);
+      if (error) {
+        console.log(error.message);
+      }
+    })();
+    socket.emit("connect-socket", authData._id);
+    socket.emit("check-status", "user");
+  }, []);
 
   const messageSendHandler = async (e) => {
-    console.log(message);
+    if (Object.keys(authData).length < 1) return;
+    socket.emit("clientMessage", { userId: _id, token, message });
     setMessage("");
   };
 
@@ -60,11 +86,68 @@ const ContactPage = () => {
                 <p className="py-4 text-base font-bold font-body">
                   Chat with us...
                 </p>
-                <p className="text-xs font-tabs py-2 px-4 font-medium bg-neutral-200">
-                  Need help ?
+                <p className="flex justify-center items-center gap-2 text-xs font-tabs py-2 px-4 font-medium bg-neutral-200">
+                  Need help ?{adminStatus && <GoDotFill color="green" />}
                 </p>
               </div>
-              <div className="h-[280px]"></div>
+              <div
+                id="msgBox"
+                className="h-[280px] flex flex-col justify-items-end px-4 py-2 overflow-auto chat-scrollbar"
+              >
+                {messages?.length > 0 ? (
+                  messages.map((msg) => {
+                    if (msg.sender === "client") {
+                      return (
+                        <div
+                          key={msg._id}
+                          className="text-right text-sm py-2.5 text-white"
+                        >
+                          <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+                            {msg.text}
+                          </span>
+                          <p className="font-body text-[10px] font-medium text-black mt-1">
+                            {new Date(msg.timestamp).toLocaleString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "numeric",
+                              hour12: true,
+                            })}
+                          </p>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div
+                          key={msg._id}
+                          className="font-body text-white text-sm py-2.5"
+                        >
+                          <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-gray-400 via-gray-600-500 to-black">
+                            {msg.text}
+                          </span>
+                          <p className="font-body text-[10px] font-medium text-black mt-1">
+                            {new Date(msg.timestamp).toLocaleString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "numeric",
+                              hour12: true,
+                            })}
+                          </p>
+                        </div>
+                      );
+                    }
+                  })
+                ) : (
+                  <div className="w-full h-full flex justify-center items-center">
+                    <p className="font-body font-semibold text-sm text-gray-400">
+                      Any Queries, Chat with us...
+                    </p>
+                  </div>
+                )}
+              </div>
               <div className="bg-neutral-100 h-12 flex px-4 gap-2 items-center">
                 <FcAssistant size={25} />
                 <input
@@ -72,7 +155,7 @@ const ContactPage = () => {
                   className="px-4 py-1 flex-grow focus:outline-none focus:border-2 rounded-md border-neutral-400"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={(e) =>
+                  onKeyUp={(e) =>
                     e.key === "Enter" && message !== "" && messageSendHandler()
                   }
                 />

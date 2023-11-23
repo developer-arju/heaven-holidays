@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Navbar from "../components/Navbar";
 import LogoIcon from "../components/LogoIcon";
@@ -60,8 +60,10 @@ const UserLogin = () => {
     <>
       <Navbar />
       <ToastContainer />
-      <GoogleOAuthProvider clientId="435341855399-gnoa82e7qu6lomcefv578bvukp3vngt5.apps.googleusercontent.com">
-        <section className="flex justify-center bg-neutral-50 py-16">
+      <GoogleOAuthProvider
+        clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID}
+      >
+        <section className="flex justify-center bg-neutral-50 pt-24 pb-16">
           <div className="px-2 py-4 rounded-md w-80 bg-white shadow-md ">
             <div className="flex justify-center">
               <LogoIcon />
@@ -123,7 +125,9 @@ const UserLogin = () => {
                 </div>
 
                 <p className="text-right text-neutral-400 font-body font-medium text-xs cursor-pointer">
-                  <span className="hover:text-black">forgot password ?</span>
+                  <Link to="/reset-password" className="hover:text-black">
+                    forgot password ?
+                  </Link>
                 </p>
                 <div className="flex justify-center mt-4 mb-2">
                   <button

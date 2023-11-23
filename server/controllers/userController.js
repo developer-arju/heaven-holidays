@@ -1,5 +1,7 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
+import jwt from "jsonwebtoken";
+import sendMail from "../utils/nodeMailer.js";
 import { generateToken } from "../utils/generateToken.js";
 import { OAuth2Client } from "google-auth-library";
 
@@ -193,6 +195,93 @@ export const toggleUserStatus = asyncHandler(async (req, res) => {
     user.isActive = !user.isActive;
     const saved = await user.save();
     return res.status(200).json({ ...saved._doc, password: "" });
+  } catch (error) {
+    res.status(404);
+    throw error;
+  }
+});
+
+// @desc Reset password
+// route POST /api/users/reset
+// @access Public
+export const resetUserPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    res.status(400);
+    throw new Error("bad request");
+  }
+
+  try {
+    const user = await User.findOne({ email });
+    if (user && user.blocked)
+      throw new Error("your account has been blocked contact admin");
+    if (user) {
+      const secret = process.env.JWT_SECRET + user.password;
+      const payload = {
+        id: user._id,
+        email: user.email,
+      };
+      const token = jwt.sign(payload, secret, { expiresIn: "10m" });
+      const url = `http://localhost:3000/reset/${user._id}?token=${token}`;
+      const mailOptions = {
+        from: "Heaven Holidays <heavenholidays@heaven-holidays.iam.gserviceaccount.com>",
+        to: `${email}`,
+        subject: "Reset Password",
+        text: `Reset Your Account Password\n follow this link ${url}`,
+        html: `<h2>Reset user account password</h2><a style="padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 4px;" href=${url} target="_blank">Click here</a>`,
+      };
+
+      const result = await sendMail(mailOptions);
+      if (!result) throw new Error("Error send url");
+      return res.status(200).send("password rest link send to your email");
+    }
+    throw new Error(`${email} is not registered with us`);
+  } catch (error) {
+    console.log(error.message);
+    res.status(404);
+    throw error;
+  }
+});
+
+// @desc Verify Reset Link
+// route GET /api/users/reset/:id/:token
+// @access Public
+export const verifyResetLink = asyncHandler(async (req, res) => {
+  const { id, token } = req.params;
+  if (!id || !token) {
+    res.status(400);
+    throw new Error("Bad request");
+  }
+  try {
+    const user = await User.findById(id);
+    if (user) {
+      const secret = process.env.JWT_SECRET + user.password;
+      const payload = jwt.verify(token, secret);
+      if (!payload) throw new Error("invalid token");
+      return res.status(200).json(payload);
+    }
+    throw new Error("looking id not found");
+  } catch (error) {
+    res.status(404);
+    throw error;
+  }
+});
+
+// @desc Update Password
+// route POST /api/users/update-password
+// @access Private
+export const updatePassword = asyncHandler(async (req, res) => {
+  const { password, id } = req.body;
+  if (!password || !id) {
+    res.status(400);
+    throw new Error("bad request");
+  }
+  try {
+    const user = await User.findById(id);
+    user.password = password;
+    const result = await user.save();
+    if (!result) throw new Error("reset password failed");
+    return res.status(200).send("password updated");
   } catch (error) {
     res.status(404);
     throw error;

@@ -14,6 +14,7 @@ import {
 } from "../controllers/packageController.js";
 import { getAllBookings } from "../controllers/bookingController.js";
 import { adminProtect } from "../middleware/authMiddleware.js";
+import { loadChatLists } from "../controllers/messageController.js";
 const router = express.Router();
 
 // router.post("/", registerAdmin);
@@ -26,5 +27,6 @@ router.put("/users/status-toggle", adminProtect, toggleUserStatus);
 router.put("/providers/status-toggle", adminProtect, toggleProviderStatus);
 router.put("/banner/set", adminProtect, setBanner);
 router.put("/package/availability", adminProtect, toggleAvailability);
+router.get("/messages", adminProtect, loadChatLists);
 
 export default router;

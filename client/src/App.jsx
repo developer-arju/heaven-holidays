@@ -11,6 +11,8 @@ import Bookings from "./pages/Bookings";
 import PackgeDetails from "./pages/PackgeDetails";
 import SavedBooking from "./pages/SavedBooking";
 import ContactPage from "./pages/ContactPage";
+import ForgotPassword from "./pages/ForgotPassword";
+import CreateNewPassword from "./pages/CreateNewPassword";
 
 // provider
 import ProviderAuth from "./pages/Provider/ProviderAuth";
@@ -45,8 +47,14 @@ import AdminPrivateRoutes from "./components/admin/PrivateRoutes";
 import PersonalInfo from "./components/Provider/PersonalInfo";
 import BussinessInfo from "./components/Provider/BussinessInfo";
 import PrivateRoutes from "./components/PrivateRoutes";
+import { useEffect } from "react";
 
-function App() {
+function App({ socket }) {
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     socket.emit("view-connection");
+  //   }, [3000]);
+  // }, []);
   return (
     <Routes>
       {/* User Routes */}
@@ -55,7 +63,7 @@ function App() {
         <Route path="packages" element={<Packages />} />
         <Route path="packages/details/:packageId" element={<PackgeDetails />} />
         <Route path="properties" element={<ResortsAndHotels />} />
-        <Route path="connect" element={<ContactPage />} />
+        <Route path="connect" element={<ContactPage socket={socket} />} />
 
         <Route element={<PrivateRoutes />}>
           <Route path="packages/book/:packageId" element={<BookPackages />} />
@@ -66,6 +74,8 @@ function App() {
         <Route element={<UserAuthenticated />}>
           <Route path="auth" element={<UserLogin />} />
           <Route path="register" element={<UserSignUp />} />
+          <Route path="reset-password" element={<ForgotPassword />} />
+          <Route path="reset/:id" element={<CreateNewPassword />} />
         </Route>
       </Route>
 
@@ -100,13 +110,13 @@ function App() {
 
       {/* Admin Routes */}
       <Route path="/admin">
-        <Route element={<AdminPrivateRoutes />}>
+        <Route element={<AdminPrivateRoutes socket={socket} />}>
           <Route index element={<AdminDashboard />} />
           <Route path="providers" element={<ProviderList />} />
           <Route path="users" element={<UsersList />} />
           <Route path="bookings" element={<AdminBookings />} />
           <Route path="packages" element={<PackageListingAdmin />} />
-          <Route path="messages" element={<Messages />} />
+          <Route path="messages" element={<Messages socket={socket} />} />
         </Route>
         <Route path="auth" element={<AdminAuth />} />
       </Route>

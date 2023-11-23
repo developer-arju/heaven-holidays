@@ -32,27 +32,26 @@ router.post("/bussiness", logoUpload.single("brandLogo"), registerBussiness);
 router.post("/reset", sendResetLink);
 router.get("/reset/:id/:token", verifyResetLink);
 router.post("/update-password", updatePassword);
-router.post("/auth", authProvider); // completed
-router.get("/property", providerProtect, getAllProperties); // completed
-router.get("/property/:id", providerProtect, getSinglePropertyDetails); // completed
+router.post("/auth", authProvider);
+router.get("/property", providerProtect, getAllProperties);
+router.get("/property/:id", providerProtect, getSinglePropertyDetails);
 router.post(
   "/property/add",
   providerProtect,
   propertyImgUpload.array("coverImage", 8),
   addProperty
-); // completed
-router.post("/property/add/:propertyId", providerProtect, addPriceOption); // completed
-router.put("/property/:propertyId", providerProtect, changePropertyStatus); // completed
+);
+router.post("/property/add/:propertyId", providerProtect, addPriceOption);
+router.put("/property/:propertyId", providerProtect, changePropertyStatus);
 router.post(
   "/property/edit/:id",
   providerProtect,
   propertyImgUpload.array("newImages", 8),
   updatePropertyDetails
-); // completed
+);
 router.post(
   "/package/add",
   providerProtect,
-  // packageUpload.array("coverImage", 2),
   packageUpload.any(),
   addNewPackage
 );

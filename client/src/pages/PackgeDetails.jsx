@@ -247,21 +247,21 @@ const PackgeDetails = () => {
                   return (
                     <div
                       key={new Date(`${idx + 1}-11-2016`)}
-                      className="xl:w-1/4 md:w-2/5 shadow-lg mx-auto"
+                      className="xl:w-1/4 md:w-2/5 mx-auto"
                     >
-                      <div className="bg-gray-100 p-4 rounded-lg">
+                      <div className="bg-gray-100 rounded-xl overflow-hidden shadow-xl">
                         <img
-                          className="h-40 rounded w-full object-cover object-center mb-6"
+                          className="h-40 w-full object-cover object-center mb-3"
                           src={`http://localhost:8000/${doc.image}`}
                           alt="content"
                         />
-                        <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font">
+                        <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font px-4">
                           {doc.type}
                         </h3>
-                        <h2 className="text-lg text-gray-900 font-medium title-font mb-4">
+                        <h2 className="text-xl text-gray-900 font-medium title-font mb-1.5 px-4">
                           {doc.location}
                         </h2>
-                        <p className="leading-relaxed text-base">
+                        <p className="leading-relaxed text-sm px-4 pb-4 whitespace-pre">
                           {doc.description}
                         </p>
                       </div>

@@ -26,7 +26,6 @@ const Auth = () => {
         password,
       });
       if (data) {
-        console.log(data);
         dispatch(setCredential(data));
         navigate("/admin");
       }

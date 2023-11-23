@@ -114,14 +114,16 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-      <Banner />
+      <div className="bg-bg-1/40 py-6">
+        <Banner />
+      </div>
       <div
-        className=" bg-bg-1/40 font-body mt-6 pt-4"
+        className=" bg-bg-1/40 font-body pt-6"
         id="featuredSection"
         ref={featuredSection}
       >
         <div className="flex justify-center items-center ">
-          <h2 className="font-title font-extrabold text-lg px-24 py-2 shadow-inner bg-white/60 border-b border-gray-400">
+          <h2 className="font-title font-extrabold text-lg px-24 py-2 shadow-inner bg-teal-100 border-b border-teal-400">
             New & Featured
           </h2>
         </div>

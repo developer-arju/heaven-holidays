@@ -8,7 +8,7 @@ const FeaturedRow = ({ doc }) => {
   return (
     <div className="package-wrapper mb-6 mt-4">
       <div className="hidden  md:flex justify-center py-4 mx-4 mb-6 mt-4">
-        <div className="ps-6 pe-12 bg-bg-1/70 shadow-lg w-[550px] min-h-max rounded-l-md">
+        <div className="ps-6 pe-12 bg-teal-100 shadow-lg w-[550px] min-h-max rounded-l-md">
           <h2 className="font-title mt-4 mb-3 text-lg font-bold text-green-700">
             {doc.provider.brandName}
           </h2>

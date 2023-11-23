@@ -3,6 +3,7 @@ import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { AiOutlineClose } from "react-icons/ai";
 import { BiLogOutCircle } from "react-icons/bi";
+import { TbBrandGravatar } from "react-icons/tb";
 import { Tooltip } from "react-tooltip";
 import { dropCredential } from "../redux/slices/userSlice";
 import LogoIcon from "./LogoIcon";
@@ -48,10 +49,6 @@ const Navbar = ({ scrollToFeaturedSection }) => {
   const toggleBtnHandler = (e) => {
     e.stopPropagation();
     setSidebarOpen(!sidebarOpen);
-  };
-
-  const handleAvatarError = (e) => {
-    console.log(e.target);
   };
 
   return (
@@ -136,30 +133,20 @@ const Navbar = ({ scrollToFeaturedSection }) => {
                 <div className="ml-2 p-[0.10rem] relative w-10 h-10 rounded-full bg-neutral-200 shadow-md hover:drop-shadow-lg cursor-pointer">
                   <button
                     onClick={() => setDropdown((prev) => !prev)}
-                    className="focus:outline-none overflow-hidden"
+                    className="focus:outline-none overflow-hidden z-50 w-full h-full"
                   >
-                    {authData?.avatar !== "" ? (
+                    {authData?.avatar ? (
                       <img
-                        src={authData.avatar}
+                        src={
+                          authData?.avatar?.includes("http")
+                            ? authData.avatar
+                            : `http://localhost:8000/${authData?.avatar}`
+                        }
                         alt="icon"
-                        onError={handleAvatarError}
                         className="object-cover rounded-full z-50"
                       />
                     ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1"
-                        stroke="currentColor"
-                        className="object-cover z-50"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
+                      <TbBrandGravatar size={30} className="mx-auto" />
                     )}
                   </button>
                   {dropdown && (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Sidebar from "./Sidebar";
@@ -6,9 +6,19 @@ import Header from "./Header";
 import BreadCrumb from "../Provider/BreadCrumb";
 import { ToastContainer } from "react-toastify";
 
-const PrivateRoutes = () => {
+const PrivateRoutes = ({ socket }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { authData } = useSelector((state) => state.admin);
+
+  useEffect(() => {
+    (async () => {
+      if (Object.keys(authData).length > 0) {
+        await socket.emit("admin-connect", true);
+      } else {
+        await socket.emit("admin-connect", false);
+      }
+    })();
+  }, []);
 
   return Object.keys(authData).length > 0 ? (
     <div className="">
