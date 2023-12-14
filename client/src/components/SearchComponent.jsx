@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { FaSearchLocation } from "react-icons/fa";
 
-const SearchComponent = ({ placeholder, setSearch }) => {
+const SearchComponent = ({ placeholder, setSearch, search }) => {
   const [keyword, setKeyword] = useState("");
+
+  useEffect(() => {
+    setKeyword(search);
+  }, [search]);
 
   const handleEnterKeypress = (e) => {
     if (e.keyCode === 13) {

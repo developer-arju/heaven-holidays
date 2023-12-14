@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { MdPublishedWithChanges } from "react-icons/md";
-import { Tooltip } from "react-tooltip";
+import { Link } from "react-router-dom";
 import { setAccessToken, getRequest, putRequest } from "../../utils/axios";
+
+import { ScaleLoader } from "react-spinners";
+import { Tooltip } from "react-tooltip";
 import { toast } from "react-toastify";
+
 import { BsFillCaretLeftFill, BsFillCaretRightFill } from "react-icons/bs";
+import { MdPublishedWithChanges } from "react-icons/md";
 import { FcAcceptDatabase } from "react-icons/fc";
-import { CiViewList } from "react-icons/ci";
+import { RiCloseCircleFill } from "react-icons/ri";
 
 import providerAvatar from "../../assets/userAvatar.png";
 const TOOLTIP_STYLE = {
@@ -26,6 +29,8 @@ const ProviderList = () => {
   const [modal, setModal] = useState({ active: false, payload: "" });
   const [providers, setProviders] = useState([]);
   const [currPage, setCurrPage] = useState(1);
+  const [requests, setRequests] = useState(false);
+  const [pending, setPending] = useState({ response: false, data: [] });
   const pagination = useRef(null);
   const totalPages = useMemo(() => {
     return Math.ceil(providers.length / 5);
@@ -76,7 +81,7 @@ const ProviderList = () => {
 
   const statusChange = async (e) => {
     e.stopPropagation();
-    console.log(modal);
+    setAccessToken(authData.token);
     const { data, error } = await putRequest("/admin/providers/status-toggle", {
       providerId: modal.payload,
     });
@@ -97,12 +102,51 @@ const ProviderList = () => {
     setModal({ active: false, payload: "" });
   };
 
+  const showPendingRequests = async (e) => {
+    e.stopPropagation();
+    setRequests(true);
+    setAccessToken(authData.token);
+    const { data, error } = await getRequest(
+      "/admin/provider/pending-requests"
+    );
+    if (data) {
+      setPending({ response: true, data });
+    }
+    if (error) {
+      setPending({ ...pending, response: true });
+      toast.warn(error?.message);
+    }
+  };
+
+  const providerControl = async (e) => {
+    e.stopPropagation();
+    const elem = e.target;
+    const { id, status } = elem.dataset;
+
+    setAccessToken(authData.token);
+    const { data, error } = await putRequest("/admin/provider/change", {
+      id,
+      status,
+    });
+    if (data) {
+      toast.success(data.message);
+      setPending({
+        ...pending,
+        data: pending.data.filter((doc) => doc._id !== id),
+      });
+    }
+    if (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <>
       <div className="flex justify-between mx-4 px-4 items-center">
         <div className="font-body font-bold text-2xl">Providers</div>
         <Link
           to="#"
+          onClick={showPendingRequests}
           data-tooltip-id="a"
           data-tooltip-content="Pending Requests"
           className="p-2 rounded-full bg-neutral-200 shadow-lg text-2xl"
@@ -111,6 +155,94 @@ const ProviderList = () => {
         </Link>
         <Tooltip style={TOOLTIP_STYLE} id="a" place="bottom-start" />
       </div>
+      {requests && (
+        <div className="absolute top-4 left-4 right-4 bottom-4 shadow-lg rounded-lg bg-blue-50 z-[999]">
+          <div className="relative w-full h-full flex justify-center py-4">
+            <span
+              onClick={() => setRequests(false)}
+              className="absolute -right-4 -top-4"
+            >
+              <RiCloseCircleFill
+                className="cursor-pointer"
+                color="red"
+                size={50}
+              />
+            </span>
+            {!pending.response && <ScaleLoader color="#36d7b7" />}
+            {pending.response && pending.data.length > 0 ? (
+              <div className="overflow-auto">
+                {pending.data.map((data) => {
+                  console.log(data);
+                  const reqDate = new Date(data.createdAt);
+                  return (
+                    <div className="flex items-center justify-between bg-neutral-100 p-2 rounded-md shadow-lg min-w-[840px]">
+                      <div className="p-4">
+                        <img
+                          src="/src/assets/user/user-03.png"
+                          alt=""
+                          className="w-16 aspect-square object-cover "
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-x-4 p-4 font-body">
+                        <div className="text-blue-400 font-bold">
+                          {`Provider Name: ${data.name}`}
+                        </div>
+                        <div className="text-blue-400 font-bold">
+                          {`Bussiness Name: ${data.brandName}`}
+                        </div>
+                        <div className="font-medium text-xs leading-loose">{`Email: ${data.email}`}</div>
+                        <div className="font-medium text-xs leading-loose">{`Official email: ${data.bussinessEmail}`}</div>
+                        <div className="font-medium text-xs leading-loose">{`Mobile: ${data.mobile}`}</div>
+                        <div className="font-medium text-xs leading-loose">{`Official Mobile: ${data.bussinessPhone}`}</div>
+                        <div className="font-medium text-xs leading-loose">{`Request Date: ${reqDate.toLocaleString(
+                          "en-IN",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          }
+                        )}`}</div>
+                        <div className="font-medium text-xs leading-loose">{`GST Number: ${
+                          data.gst !== ""
+                            ? data.gst
+                            : "gst number not available"
+                        }`}</div>
+                      </div>
+                      <div
+                        onClick={providerControl}
+                        className="flex flex-col gap-2.5 p-4 font-body text-sm"
+                      >
+                        <button
+                          data-id={data._id}
+                          data-status="verified"
+                          className=" px-4 py-1.5 rounded-md font-semibold bg-green-400 text-white shadow-lg hover:bg-white border border-green-400 hover:text-green-400"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          data-id={data._id}
+                          data-status="rejected"
+                          className=" px-4 py-1.5 rounded-md font-semibold bg-red-600 text-white shadow-lg hover:bg-white border border-red-600 hover:text-red-600"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="self-center font-body font-semibold text-base text-gray-600">
+                There are no requests pending at this moment!
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <div className="mt-2 overflow-x-auto">
         {providers.length > 0 ? (
           <table className="min-w-full table-auto text-center text-sm font-light">
@@ -173,17 +305,6 @@ const ProviderList = () => {
                       {!provider.blocked ? "available" : "unavailable"}
                     </td>
 
-                    <td className="whitespace-nowrap px-6 py-4">
-                      <Link to={"#"}>
-                        <CiViewList className="text-base cursor-pointer focus:outline-none view-form" />
-                      </Link>
-                      <Tooltip
-                        style={TOOLTIP_STYLE}
-                        place="bottom-end"
-                        anchorSelect=".view-form"
-                        content="view details"
-                      />
-                    </td>
                     <td className="whitespace-nowrap px-6 py-4">
                       <MdPublishedWithChanges
                         className={

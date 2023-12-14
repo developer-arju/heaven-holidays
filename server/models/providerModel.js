@@ -35,6 +35,10 @@ const providerSchema = mongoose.Schema(
     bussinessPhone: {
       type: Number,
     },
+    registrationStatus: {
+      type: String,
+      default: "pending",
+    },
     blocked: {
       type: Boolean,
       required: true,

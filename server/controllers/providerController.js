@@ -181,6 +181,16 @@ export const authProvider = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("not registered with us");
   }
+  if (provider.registrationStatus === "pending") {
+    res.status(401);
+    throw new Error("you are not verified yet");
+  }
+  if (provider.registrationStatus === "rejected") {
+    res.status(401);
+    throw new Errorl(
+      "your registration request is rejected, contact admin for more details"
+    );
+  }
   if (
     provider &&
     !provider.blocked &&
@@ -231,6 +241,43 @@ export const toggleProviderStatus = asyncHandler(async (req, res) => {
     const saved = await provider.save();
     console.log(saved);
     return res.status(200).json(saved);
+  } catch (error) {
+    res.status(400);
+    throw error;
+  }
+});
+
+// @desc Get pending Provider Requests
+// route GET /api/admin/provider/pending-requests
+// @access private
+export const getPendingRequests = asyncHandler(async (req, res) => {
+  try {
+    const pending = await Provider.find({
+      registrationStatus: "pending",
+    }).select("-password");
+    if (pending.length < 1) throw new Error("pending requests not found");
+    return res.status(200).json(pending);
+  } catch (error) {
+    res.status(400);
+    throw error;
+  }
+});
+
+// @desc change registration status
+// route PUT /api/admin/provider/change
+// @access Private
+export const changeRegistrationStatus = asyncHandler(async (req, res) => {
+  const { id, status } = req.body;
+  try {
+    const provider = await Provider.findById(id);
+    if (!provider) throw new Error("document not found");
+
+    provider.registrationStatus = status;
+    const saved = await provider.save();
+    if (!saved) throw new Error("database operation failed");
+    return res
+      .status(200)
+      .json({ message: `provider registration status changed to ${status}` });
   } catch (error) {
     res.status(400);
     throw error;

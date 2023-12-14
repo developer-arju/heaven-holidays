@@ -23,7 +23,9 @@ const ProviderAuth = () => {
 
   useEffect(() => {
     if (registration === "success") {
-      toast.success("Welcome to Heaven Holidays, Login for bussiness with us");
+      toast.success(
+        "Welcome to Heaven Holidays, Once verified you can login to the portal"
+      );
     }
     if (updated === "reset") {
       toast.success("Password updated");

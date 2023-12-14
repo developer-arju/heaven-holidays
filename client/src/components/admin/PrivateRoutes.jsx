@@ -29,7 +29,7 @@ const PrivateRoutes = ({ socket }) => {
         {/* <!-- ===== Sidebar End ===== --> */}
 
         {/* <!-- ===== Content Area Start ===== --> */}
-        <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+        <div className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
           {/* <!-- ===== Header Start ===== --> */}
           <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
           {/* <!-- ===== Header End ===== --> */}
@@ -38,7 +38,7 @@ const PrivateRoutes = ({ socket }) => {
           <main>
             <BreadCrumb />
             <ToastContainer />
-            <div className="mx-auto max-w-screen-2xl p-4 md:p-4 2xl:p-8">
+            <div className="relative mx-auto max-w-screen-2xl p-4 md:p-4 2xl:p-8">
               <Outlet />
             </div>
           </main>

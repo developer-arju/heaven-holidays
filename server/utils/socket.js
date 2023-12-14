@@ -4,11 +4,6 @@ import {
   replyToClient,
 } from "../controllers/messageController.js";
 
-// export const onDisconnect = (socket, connectedSockets) => {
-
-//   console.log("socket disconnected: " + socket.id);
-// };
-
 export const onGetMessage = async ({ userId, token, message }) => {
   const payload = verifyToken(token);
   if (payload && payload.id === userId) {

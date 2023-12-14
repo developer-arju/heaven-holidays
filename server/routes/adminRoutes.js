@@ -3,6 +3,8 @@ import { registerAdmin, authenticate } from "../controllers/adminController.js";
 import {
   getAllProviders,
   toggleProviderStatus,
+  getPendingRequests,
+  changeRegistrationStatus,
 } from "../controllers/providerController.js";
 import {
   getAllUsers,
@@ -22,6 +24,8 @@ const router = express.Router();
 router.post("/auth", authenticate);
 router.get("/users", adminProtect, getAllUsers);
 router.get("/providers", adminProtect, getAllProviders);
+router.put("/provider/change", adminProtect, changeRegistrationStatus);
+router.get("/provider/pending-requests", adminProtect, getPendingRequests);
 router.get("/bookings", adminProtect, getAllBookings);
 router.put("/users/status-toggle", adminProtect, toggleUserStatus);
 router.put("/providers/status-toggle", adminProtect, toggleProviderStatus);

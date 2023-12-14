@@ -122,7 +122,31 @@ export const getPackages = asyncHandler(async (req, res) => {
     if (search === "" || search === undefined) {
       packages = await Package.find({}).populate("provider", "brandName");
     } else {
-      packages = await Package.find({ packageName: search });
+      packages = await Package.aggregate([
+        {
+          $match: {
+            $or: [
+              { packageName: { $regex: search, $options: "i" } },
+              {
+                "accomodation.location": {
+                  $regex: search,
+                  $options: "i",
+                },
+              },
+              {
+                activity: {
+                  $elemMatch: {
+                    $or: [
+                      { location: { $regex: search, $options: "i" } },
+                      { description: { $regex: search, $options: "i" } },
+                    ],
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ]).exec();
     }
     if (packages.length < 1) {
       throw new Error("packages not found");

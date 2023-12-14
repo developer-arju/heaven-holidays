@@ -7,24 +7,27 @@ import Footer from "../components/Footer";
 import PackageInfo from "../components/PackageInfo";
 import { toast, ToastContainer } from "react-toastify";
 import { AiFillCaretDown } from "react-icons/ai";
+import { FcSynchronize } from "react-icons/fc";
 
 import downArrow from "../assets/arrow-down.png";
 
 const Packages = () => {
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
   const [fetchPackages, setFetchPackages] = useState([]);
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
       const { data, error, message } = await getRequest(
         `/users/packages?search=${search}`
       );
+      setLoading(false);
       if (data) {
         setFetchPackages(data);
       }
       if (error) {
         setFetchPackages([]);
-        toast.error(error?.message || message);
         console.log(error?.message || message);
       }
     })();
@@ -64,6 +67,7 @@ const Packages = () => {
       <SearchComponent
         placeholder="search travel packages"
         setSearch={setSearch}
+        search={search}
       />
       {fetchPackages.length > 0 ? (
         <div className="pb-8 bg-bg-1/60">
@@ -100,9 +104,28 @@ const Packages = () => {
             })}
           </div>
         </div>
-      ) : (
+      ) : loading ? (
         <div className="absolute top-2/3 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <GridLoader color="#36d7b7" />
+        </div>
+      ) : (
+        <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-96 h-1/2  bg-inherit rounded-lg shadow-lg">
+          <div className="flex flex-col items-center w-full h-full gap-4 justify-center">
+            <div>
+              <h2 className="font-body text-base font-medium text-orange-500 mb-2">
+                Can't find any matches
+              </h2>
+              <FcSynchronize className="mx-auto" size={50} />
+            </div>
+            <div>
+              <button
+                className="font-tabs text-sm tracking-wide text-white bg-blue-500 focus:outline-none px-4 py-2 rounded-sm shadow-xl"
+                onClick={() => setSearch("")}
+              >
+                clear search
+              </button>
+            </div>
+          </div>
         </div>
       )}
       <div className="text-black bg-bg-1 absolute bottom-0 translate-y-2/3 left-0 right-0">
