@@ -11,15 +11,14 @@ import EmptyTemplate from "../components/EmptyTemplate";
 const SavedBooking = () => {
   const { authData } = useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
-  const [displayItem, setDisplayItem] = useState("packages");
   const [packages, setPackages] = useState([]);
-  const [rooms, setRooms] = useState([]);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       setAccessToken(authData.token);
       const { data, error } = await getRequest("/users/favourites/packages");
+      setLoading(false);
       if (data) {
         setPackages(data);
       }
@@ -27,7 +26,6 @@ const SavedBooking = () => {
         console.log(error);
         toast.error(error.message);
       }
-      setLoading(false);
     })();
   }, []);
 
@@ -37,7 +35,7 @@ const SavedBooking = () => {
       packageId: id,
     });
     if (data) {
-      setPackages(data.packages);
+      setPackages((prev) => prev.filter((obj) => obj._id !== id));
     }
     if (error) {
       console.log(error);
@@ -48,28 +46,6 @@ const SavedBooking = () => {
     <div className="relative bg-bg-1/60 min-h-screen py-12 w-full">
       <Navbar />
       <main className="font-body">
-        <div className="flex justify-center pt-2 font-semibold text-lg cursor-pointer">
-          <h2
-            onClick={() => setDisplayItem("packages")}
-            className={
-              displayItem === "packages"
-                ? "flex-grow py-2 text-center border-r bg-bg-1   border-b border-gray-600"
-                : "flex-grow py-2 text-center border-r bg-neutral-100 hover:bg-bg-1/40  border-b border-gray-600"
-            }
-          >
-            Packages
-          </h2>
-          <h2
-            onClick={() => setDisplayItem("rooms")}
-            className={
-              displayItem === "rooms"
-                ? "flex-grow py-2 text-center border-r bg-bg-1  border-b border-gray-600"
-                : "flex-grow py-2 text-center border-r bg-neutral-100 hover:bg-bg-1/40  border-b border-gray-600"
-            }
-          >
-            Rooms & Resorts
-          </h2>
-        </div>
         <section className="text-gray-600 font-body mb-4">
           <h1 className="py-4 text-gray-400 font-medium font-title text-center text-[24px]">
             Favourites
@@ -80,7 +56,7 @@ const SavedBooking = () => {
             </div>
           ) : (
             <div className="container flex flex-wrap justify-center gap-4 py-6 mx-auto">
-              {displayItem === "packages" && packages.length < 1 ? (
+              {packages.length < 1 ? (
                 <EmptyTemplate />
               ) : (
                 packages?.map((doc) => (
@@ -91,7 +67,6 @@ const SavedBooking = () => {
                   />
                 ))
               )}
-              {/* {displayItem === "rooms" && } */}
             </div>
           )}
         </section>

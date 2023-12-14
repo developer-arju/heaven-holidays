@@ -8,7 +8,7 @@ const FavouritePackage = ({ doc, removeHandler }) => {
       <div className="w-full bg-neutral-50 rounded border border-bg-1">
         <a className="block relative h-44 aspect-video rounded overflow-hidden">
           <span
-            onClick={() => removeHandler(doc._id)}
+            onClick={() => removeHandler(doc?._id)}
             className="absolute right-1 top-1 bg-white rounded-full shadow-2xl cursor-pointer"
           >
             <IoMdRemoveCircle className="text-red-600 mx-auto text-[24px]" />
@@ -33,7 +33,7 @@ const FavouritePackage = ({ doc, removeHandler }) => {
               maximumFractionDigits: 0,
             })}
             <Link
-              to={`/packages/details/${doc._id}`}
+              to={`/packages/details/${doc?._id}`}
               className="px-5 py-2 rounded bg-green-600 shadow-lg text-white cursor-pointer"
             >
               See Info

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { getRequest, postRequest, setAccessToken } from "../utils/axios";
 import { ToastContainer, toast } from "react-toastify";
 import {
@@ -12,14 +12,17 @@ import { MdToday } from "react-icons/md";
 import { GoDotFill } from "react-icons/go";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useSelector } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
+import { dropCredential } from "../redux/slices/userSlice";
 const PackgeDetails = () => {
   const { packageId } = useParams();
   const { authData } = useSelector((state) => state.user);
   const [coverImgIndex, setCoverImgIndex] = useState(0);
   const [packageData, setPackageData] = useState(null);
   const [currDayIdx, setCurrDayIdx] = useState(0);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
@@ -60,7 +63,10 @@ const PackgeDetails = () => {
       toast.success(data.message);
     }
     if (error) {
-      console.log(error);
+      if (error.message === "user has been blocked") {
+        dispatch(dropCredential());
+        navigate("/auth?blocked=true");
+      }
     }
   };
 

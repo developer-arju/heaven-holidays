@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Navbar from "../components/Navbar";
 import LogoIcon from "../components/LogoIcon";
@@ -19,6 +19,15 @@ const UserLogin = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const queryParam = new URLSearchParams(location.search);
+  const blocked = queryParam.get("blocked");
+
+  useEffect(() => {
+    if (blocked === "true") {
+      toast.error("user blocked contact admin");
+    }
+  }, []);
 
   const handleInpFocus = (e) => {
     const inpDiv = e.target.parentElement;

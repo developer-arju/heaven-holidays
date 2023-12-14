@@ -152,9 +152,6 @@ const Navbar = ({ scrollToFeaturedSection }) => {
                   {dropdown && (
                     <div className="absolute top-12 right-6 w-48 z-50 p-6 bg-neutral-100 cursor-default shadow-xl rounded-xl">
                       <ul className="flex flex-col justify-center items-center gap-2 mb-2">
-                        <li className="font-body text-sm text-black">
-                          profile
-                        </li>
                         <li className=" mt-1 text-red-600 font-body text-lg">
                           <button
                             onClick={() => dispatch(dropCredential())}

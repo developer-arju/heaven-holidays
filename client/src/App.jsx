@@ -50,11 +50,6 @@ import PrivateRoutes from "./components/PrivateRoutes";
 import { useEffect } from "react";
 
 function App({ socket }) {
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     socket.emit("view-connection");
-  //   }, [3000]);
-  // }, []);
   return (
     <Routes>
       {/* User Routes */}
