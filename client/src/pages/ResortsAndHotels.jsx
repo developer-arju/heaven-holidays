@@ -2,13 +2,11 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getRequest } from "../utils/axios";
-import SearchComponent from "../components/SearchComponent";
 import { toast, ToastContainer } from "react-toastify";
 import { HashLoader } from "react-spinners";
 import PropertyCard from "../components/PropertyCard";
 
 const ResortsAndHotels = () => {
-  const [search, setSearch] = useState("");
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -27,19 +25,12 @@ const ResortsAndHotels = () => {
     })();
   }, []);
 
-  useEffect(() => {
-    console.log("search handle here");
-  }, [search]);
-
   return (
     <div className="min-h-screen relative bg-bg-1/60">
       <Navbar />
       <ToastContainer />
-      <SearchComponent
-        placeholder="search resorts and hotels"
-        setSearch={setSearch}
-      />
-      <main className="w-full h-full bg-inherit pb-24">
+
+      <main className="absolute w-full h-full bg-inherit py-24">
         {loading ? (
           <div className="flex justify-center items-center h-[480px]">
             <HashLoader color="#36d7b7" size={80} />

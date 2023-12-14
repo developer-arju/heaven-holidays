@@ -13,25 +13,16 @@ const TOOLTIP_STYLE = {
 };
 
 const PropertyCard = ({ doc }) => {
-  // useEffect(() => {
-  //   if ("launchApp" in navigator && navigator.launchApp) {
-  //     console.log("dialer is in");
-  //   } else {
-  //     console.log("dialer is not");
-  //   }
-  // });
-
   const sortedPlanPrice = doc.priceOptions.sort(
     (a, b) => a.planPrice - b.planPrice
   );
 
-  console.log(sortedPlanPrice);
-  // console.log(doc);
+  console.log(doc);
   return (
     <div className="max-w-sm rounded overflow-hidden shadow-lg">
       <img
-        className="w-full"
-        src="src/assets/munnar/munnar_landscape(1).jpg"
+        className="w-full h-48"
+        src={`http://localhost:8000/${doc?.propertyImages[0]}`}
         alt="Sunset in the mountains"
       />
       <div className="px-6 py-2 bg-gradient-to-r from-neutral-200 via-neutral-400 to-gray-500 shadow-inner">
@@ -67,6 +58,7 @@ const PropertyCard = ({ doc }) => {
               data-tooltip-id="whatsapp"
               data-tooltip-content="chat via whatsapp"
               color="green"
+              className="focus:outline-none"
               size={30}
             />
             <Tooltip style={TOOLTIP_STYLE} place="bottom" id="whatsapp" />
