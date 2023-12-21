@@ -13,6 +13,7 @@ import {
 import {
   setBanner,
   toggleAvailability,
+  fetchAllPackages,
 } from "../controllers/packageController.js";
 import { getAllBookings } from "../controllers/bookingController.js";
 import { adminProtect } from "../middleware/authMiddleware.js";
@@ -25,6 +26,7 @@ router.post("/auth", authenticate);
 router.get("/users", adminProtect, getAllUsers);
 router.get("/providers", adminProtect, getAllProviders);
 router.put("/provider/change", adminProtect, changeRegistrationStatus);
+router.get("/packages", adminProtect, fetchAllPackages);
 router.get("/provider/pending-requests", adminProtect, getPendingRequests);
 router.get("/bookings", adminProtect, getAllBookings);
 router.put("/users/status-toggle", adminProtect, toggleUserStatus);

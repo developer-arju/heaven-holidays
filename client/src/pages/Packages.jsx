@@ -9,8 +9,6 @@ import { toast, ToastContainer } from "react-toastify";
 import { AiFillCaretDown } from "react-icons/ai";
 import { FcSynchronize } from "react-icons/fc";
 
-import downArrow from "../assets/arrow-down.png";
-
 const Packages = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);

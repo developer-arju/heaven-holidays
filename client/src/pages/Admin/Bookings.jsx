@@ -310,7 +310,7 @@ const Bookings = () => {
       {singleView.show && (
         <div
           onClick={() => setSingleView({ show: false, doc: null })}
-          className="absolute top-0 left-0 right-0 bottom-0 bg-neutral-200 overflow-auto"
+          className="absolute wrapper top-0 left-0 w-full h-fit invisible-scrollbar bg-neutral-200 overflow-auto"
         >
           <div className="absolute left-1/2 cursor-pointer -translate-x-1/2 bottom-4  p-2.5 bg-red-200 rounded-full shadow-lg">
             <GrFormClose className="text-2xl" />

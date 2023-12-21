@@ -121,3 +121,25 @@ export const getAllBookings = asyncHandler(async (req, res) => {
     throw error;
   }
 });
+
+// @desc Provider Bookings
+// route GET /api/provider/bookings
+// @access Private
+export const getProviderSales = asyncHandler(async (req, res) => {
+  const { providerId } = req;
+
+  try {
+    const bookings = await Booking.find({}).populate("packageId");
+    if (bookings.length < 1) throw new Error("can't find any bookings");
+
+    const providerSale = bookings.filter(
+      (doc) => doc.packageId.provider.toString() === providerId
+    );
+    if (providerSale.length < 1) throw new Error("can't find any bookings");
+
+    res.status(200).json(providerSale);
+  } catch (error) {
+    res.status(400);
+    throw error;
+  }
+});

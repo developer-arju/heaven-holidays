@@ -107,7 +107,8 @@ const Packages = () => {
   }
 
   async function fetchPackages() {
-    const { data, error } = await getRequest("/users/packages");
+    setAccessToken(authData.token);
+    const { data, error } = await getRequest("/admin/packages");
     if (data) {
       setPackages(data);
     }

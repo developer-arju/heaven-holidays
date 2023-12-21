@@ -7,7 +7,7 @@ import { MdPublishedWithChanges } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { BsFillCaretLeftFill, BsFillCaretRightFill } from "react-icons/bs";
 import { toast } from "react-toastify";
-import { getRequest, setAccessToken } from "../../utils/axios";
+import { getRequest, postRequest, setAccessToken } from "../../utils/axios";
 
 const TOOLTIP_STYLE = {
   paddingLeft: "8px",
@@ -20,7 +20,7 @@ const TOOLTIP_STYLE = {
   color: " rgb(30 64 175)",
 };
 
-const Properties = () => {
+const Packages = () => {
   const [modal, setModal] = useState({ active: false, payload: "" });
   const [isLoaded, setIsLoaded] = useState(false);
   const [packages, setPackages] = useState([]);
@@ -63,6 +63,18 @@ const Properties = () => {
       }
       pagination.current.appendChild(child);
     }
+
+    return () => {
+      for (let i = 1; i <= totalPages; i++) {
+        if (pagination.current) {
+          const child = pagination.current.querySelector(`:nth-child(${i})`);
+          if (child) {
+            child.removeEventListener("click", pageClick);
+            child.remove();
+          }
+        }
+      }
+    };
   }, [totalPages, currPage]);
 
   function pageClick(e) {
@@ -70,6 +82,29 @@ const Properties = () => {
     const pageNumber = parseInt(e.target.textContent);
     setCurrPage(pageNumber);
   }
+
+  const toggleAvailability = async () => {
+    setAccessToken(authData.token);
+    const { data, error } = await postRequest(
+      "/provider/package/availability",
+      { packageId: modal.payload }
+    );
+    setModal({ active: false, payload: "" });
+    if (data) {
+      toast.success("package status changed");
+      setPackages((prev) =>
+        prev.map((doc) => {
+          if (doc._id === data._id) {
+            return data;
+          }
+          return doc;
+        })
+      );
+      if (error) {
+        toast.error(error.message);
+      }
+    }
+  };
 
   return (
     <div>
@@ -107,7 +142,6 @@ const Properties = () => {
                     Price
                   </th>
                   <th scope="col" className="px-6 py-4"></th>
-                  <th scope="col" className="px-6 py-4"></th>
                 </tr>
               </thead>
               <tbody>
@@ -141,17 +175,6 @@ const Properties = () => {
                         &#8377; {doc.price.toLocaleString("en-IN")}
                       </td>
 
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <Link to={`edit/${doc._id}`}>
-                          <FaEdit className="text-base cursor-pointer focus:outline-none view-form" />
-                        </Link>
-                        <Tooltip
-                          style={TOOLTIP_STYLE}
-                          place="bottom-end"
-                          anchorSelect=".view-form"
-                          content="view/edit details"
-                        />
-                      </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <MdPublishedWithChanges
                           className="text-lg text-blue-800 cursor-pointer status-change focus:outline-none"
@@ -227,7 +250,10 @@ const Properties = () => {
               >
                 No
               </button>
-              <button className="px-4 py-1 rounded-md border border-red-500 font-bold text-red-500 hover:bg-red-500 hover:text-white">
+              <button
+                onClick={toggleAvailability}
+                className="px-4 py-1 rounded-md border border-red-500 font-bold text-red-500 hover:bg-red-500 hover:text-white"
+              >
                 Yes
               </button>
             </div>
@@ -238,4 +264,4 @@ const Properties = () => {
   );
 };
 
-export default Properties;
+export default Packages;

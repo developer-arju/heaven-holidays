@@ -74,7 +74,7 @@ const Banner = () => {
       </div>
 
       <div className="flex flex-wrap justify-between items-end gap-4 mx-8 md:mx-16 mt-36 md:mt-56">
-        <div className="flex-grow flex-shrink font-body w-full text-black bg-emerald-100/80 max-w-2xl z-40  p-4 rounded-xl">
+        <div className="flex-grow flex-shrink font-body w-full text-black bg-emerald-100/80 max-w-2xl z-40 p-4 rounded-xl">
           <p className="text-lg md:text-3xl font-bold mb-2">
             {activePackage?.packageName}
           </p>
@@ -87,7 +87,7 @@ const Banner = () => {
                   : ""
               }`}
             <br />
-            <span className="font-extrabold font-sans tracking-tight text-green-500 text-2xl">
+            <span className="font-extrabold font-sans tracking-tight text-red-500 text-2xl">
               {activePackage?.price.toLocaleString("en-IN", {
                 style: "currency",
                 currency: "INR",

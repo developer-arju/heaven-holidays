@@ -120,7 +120,10 @@ export const getPackages = asyncHandler(async (req, res) => {
   let packages;
   try {
     if (search === "" || search === undefined) {
-      packages = await Package.find({}).populate("provider", "brandName");
+      packages = await Package.find({ isAvailable: true }).populate(
+        "provider",
+        "brandName"
+      );
     } else {
       packages = await Package.aggregate([
         {
@@ -144,6 +147,7 @@ export const getPackages = asyncHandler(async (req, res) => {
                 },
               },
             ],
+            isAvailable: true,
           },
         },
       ]).exec();
@@ -181,7 +185,7 @@ export const getSinglePackageDetails = asyncHandler(async (req, res) => {
 // @access Public
 export const getLatest = asyncHandler(async (req, res) => {
   try {
-    const latest = await Package.find()
+    const latest = await Package.find({ isAvailable: true })
       .sort({ _id: -1 })
       .limit(5)
       .populate("provider", "brandName");
@@ -240,7 +244,7 @@ export const toggleAvailability = asyncHandler(async (req, res) => {
 // @access Public
 export const getBannerItems = asyncHandler(async (req, res) => {
   try {
-    const banners = await Package.find({ banner: true });
+    const banners = await Package.find({ banner: true, isAvailable: true });
     if (!banners) throw new Error("no packages set as banner");
 
     return res.status(200).json(banners);
@@ -250,6 +254,21 @@ export const getBannerItems = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc Get All Packages
+// route GET /api/admin/packages
+// @access Private
+export const fetchAllPackages = asyncHandler(async (req, res) => {
+  try {
+    const packages = await Package.find({});
+    if (!packages) {
+      throw new Error("packages not found in database");
+    }
+    return res.status(200).json(packages);
+  } catch (error) {
+    res.status(404);
+    throw error;
+  }
+});
 // @desc retrive package info
 export function getPackage(id) {
   return new Promise(async (resolve, reject) => {

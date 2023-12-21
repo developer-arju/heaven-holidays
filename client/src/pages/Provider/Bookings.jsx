@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { FaEdit } from "react-icons/fa";
 import { MdPublishedWithChanges } from "react-icons/md";
+import { getRequest, setAccessToken } from "../../utils/axios";
 
 const TOOLTIP_STYLE = {
   paddingLeft: "8px",
@@ -16,6 +18,22 @@ const TOOLTIP_STYLE = {
 };
 
 const Bookings = () => {
+  const { authData } = useSelector((state) => state.provider);
+  console.log(authData);
+
+  useEffect(() => {
+    (async () => {
+      setAccessToken(authData.token);
+      const { data, error } = await getRequest("/provider/bookings");
+      if (data) {
+        console.log(data);
+      }
+      if (error) {
+        console.log(error?.message);
+      }
+    })();
+  }, []);
+
   return (
     <>
       <div className="flex mx-4 px-4 py-2 items-center">
@@ -26,19 +44,23 @@ const Bookings = () => {
           <thead className="border-b bg-neutral-50 shadow-inner font-medium">
             <tr>
               <th scope="col" className="px-6 py-4">
-                Property Name
+                Booking Id
               </th>
               <th scope="col" className="px-6 py-4">
-                Location
+                Package Name
               </th>
               <th scope="col" className="px-6 py-4">
-                Booking Availability
+                Booking Date
               </th>
               <th scope="col" className="px-6 py-4">
-                Price Plan Count
+                status
               </th>
-              <th scope="col" className="px-6 py-4"></th>
-              <th scope="col" className="px-6 py-4"></th>
+              <th scope="col" className="px-6 py-4">
+                Amount
+              </th>
+              <th scope="col" className="px-6 py-4">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>

@@ -18,6 +18,7 @@ import {
 import {
   addNewPackage,
   getAllPackages,
+  toggleAvailability,
 } from "../controllers/packageController.js";
 import { providerProtect } from "../middleware/authMiddleware.js";
 import {
@@ -25,6 +26,7 @@ import {
   logoUpload,
   packageUpload,
 } from "../utils/multer.js";
+import { getProviderSales } from "../controllers/bookingController.js";
 const router = express.Router();
 
 router.post("/", registerProvider);
@@ -56,5 +58,7 @@ router.post(
   addNewPackage
 );
 router.get("/packages", providerProtect, getAllPackages);
+router.post("/package/availability", providerProtect, toggleAvailability);
+router.get("/bookings", providerProtect, getProviderSales);
 
 export default router;

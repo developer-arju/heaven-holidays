@@ -47,7 +47,6 @@ import AdminPrivateRoutes from "./components/admin/PrivateRoutes";
 import PersonalInfo from "./components/Provider/PersonalInfo";
 import BussinessInfo from "./components/Provider/BussinessInfo";
 import PrivateRoutes from "./components/PrivateRoutes";
-import { useEffect } from "react";
 
 function App({ socket }) {
   return (

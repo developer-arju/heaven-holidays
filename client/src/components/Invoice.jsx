@@ -4,11 +4,8 @@ import { BsCurrencyRupee } from "react-icons/bs";
 
 const Invoice = ({ doc }) => {
   return (
-    <div
-      style={{ aspectRatio: "1 / 1.294" }}
-      className="h-full text-center bg-white shadow-sm mx-auto p-16"
-    >
-      <div className="w-full h-full font-body">
+    <div className="text-center h-min bg-white shadow-sm mx-auto p-16">
+      <div className="w-full h-fit font-body">
         <div className="title flex flex-wrap justify-between items-center px-4">
           <LogoIcon />
 
@@ -76,8 +73,8 @@ const Invoice = ({ doc }) => {
             {doc.packageId.price}
           </span>
         </div>
-        <div className="flex justify-between">
-          <div className="px-4 text-left mt-4">
+        <div className="flex gap-4 flex-wrap justify-between h-max">
+          <div className="text-left mt-4">
             <p className="font-semibold text-xs text-blue-400 underline leading-relaxed">
               Seller Information
             </p>
