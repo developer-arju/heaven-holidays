@@ -1,6 +1,7 @@
 import Booking from "../models/bookingModel.js";
 import asyncHandler from "express-async-handler";
 import { getPackage } from "./packageController.js";
+import { createNotification } from "./notificationController.js";
 import {
   createOrder,
   verifyPayment,
@@ -62,6 +63,7 @@ export const verificationHandler = asyncHandler(async (req, res) => {
           },
         }
       );
+      createNotification(order.receipt);
       return res.status(200).json({ bookingId: order.receipt });
     }
     throw new Error("booking updation failed");
@@ -143,3 +145,15 @@ export const getProviderSales = asyncHandler(async (req, res) => {
     throw error;
   }
 });
+
+// retrive booking info by ID
+// helper function
+export const getBookingInfo = async (id) => {
+  try {
+    const booking = await Booking.findOne({ _id: id }).populate("packageId");
+    if (!booking) throw new Error("invalid id");
+    return booking;
+  } catch (error) {
+    return error;
+  }
+};

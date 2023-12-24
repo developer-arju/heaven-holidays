@@ -27,6 +27,7 @@ import {
   packageUpload,
 } from "../utils/multer.js";
 import { getProviderSales } from "../controllers/bookingController.js";
+import { getNotifications } from "../controllers/notificationController.js";
 const router = express.Router();
 
 router.post("/", registerProvider);
@@ -60,5 +61,6 @@ router.post(
 router.get("/packages", providerProtect, getAllPackages);
 router.post("/package/availability", providerProtect, toggleAvailability);
 router.get("/bookings", providerProtect, getProviderSales);
+router.get("/notifications", providerProtect, getNotifications);
 
 export default router;

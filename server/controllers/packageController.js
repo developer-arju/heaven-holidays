@@ -269,6 +269,7 @@ export const fetchAllPackages = asyncHandler(async (req, res) => {
     throw error;
   }
 });
+
 // @desc retrive package info
 export function getPackage(id) {
   return new Promise(async (resolve, reject) => {

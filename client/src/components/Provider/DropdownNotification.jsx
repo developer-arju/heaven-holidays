@@ -1,11 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { getRequest, setAccessToken } from "../../utils/axios";
+import { useSelector } from "react-redux";
 
 const DropdownNotification = () => {
+  const { authData } = useSelector((state) => state.provider);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
   const trigger = useRef(null);
   const dropdown = useRef(null);
+
+  useEffect(() => {
+    (async () => {
+      setAccessToken(authData.token);
+      const { data, error } = await getRequest("/provider/notifications");
+      if (data) {
+        console.log(data);
+      }
+      if (error) {
+        console.log(error?.message);
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     const clickHandler = ({ target }) => {
@@ -20,7 +35,7 @@ const DropdownNotification = () => {
     };
     document.addEventListener("click", clickHandler);
     return () => document.removeEventListener("click", clickHandler);
-  });
+  }, [dropdown, trigger]);
 
   return (
     <li className="relative">
@@ -53,12 +68,15 @@ const DropdownNotification = () => {
           dropdownOpen === true ? "block" : "hidden"
         }`}
       >
-        <div className="px-4 py-3 border-b-2">
+        <div className="flex justify-between items-center px-4 py-3 border-b-2">
           <h5 className="text-sm font-medium">Notification</h5>
+          <p className="text-[12px] font-medium text-red-500 [text-shadow:_0_1px_1px_rgb(254_202_202_/_60)] cursor-pointer hover:scale-110 transition-all">
+            Clear All
+          </p>
         </div>
 
         <ul className="flex h-auto flex-col overflow-y-auto invisible-scrollbar">
-          <li>
+          {/* <li>
             <Link className="flex flex-col gap-2.5 px-4 py-3" to="#">
               <p className="text-sm">
                 <span className="text-black">
@@ -113,7 +131,7 @@ const DropdownNotification = () => {
 
               <p className="text-xs">01 Dec, 2024</p>
             </Link>
-          </li>
+          </li> */}
         </ul>
       </div>
     </li>
