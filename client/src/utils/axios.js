@@ -6,7 +6,7 @@ export function setAccessToken(token) {
 }
 
 const appInstance = axios.create({
-  baseURL: "http://holidays.digimartshopy.shop/api",
+  baseURL: "https://holidays.digimartshopy.shop/api",
   headers: {
     "Content-Type": "application/json",
   },
