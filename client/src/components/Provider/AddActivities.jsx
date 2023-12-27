@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useFieldArray } from "react-hook-form";
-
 import ActivityForm from "./ActivityForm";
+
+import imageIcon from "../../assets/addImage.png";
 
 const AddActivities = ({
   setActiveComponent,
@@ -86,11 +87,7 @@ const AddActivities = ({
                     {index < fields.length - 1 ? "" : "Add Activity"}
                   </div>
                   <img
-                    src={
-                      index < fields.length - 1
-                        ? imgUrls[index]
-                        : "/src/assets/addImage.png"
-                    }
+                    src={index < fields.length - 1 ? imgUrls[index] : imageIcon}
                     alt="activity image"
                     className={
                       index < fields.length - 1

@@ -6,6 +6,8 @@ import { GiWorld } from "react-icons/gi";
 import { ToastContainer, toast } from "react-toastify";
 import { postRequest } from "../../utils/axios";
 
+import cardImage from "../../assets/kerala-responsible-tourism.jpg";
+
 const authRegEx = /^\d{6}$/;
 const passwordRegEx =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -41,11 +43,7 @@ const Auth = () => {
       <ToastContainer />
       <main className="w-full h-screen flex justify-center items-center bg-slate-100">
         <div className="hidden sm:block relative shadow-md w-64 h-96">
-          <img
-            src="/src/assets/kerala-responsible-tourism.jpg"
-            alt=""
-            className="w-fit h-fit overflow-hidden"
-          />
+          <img src={cardImage} alt="" className="w-fit h-fit overflow-hidden" />
           <div className="absolute top-1 left-1 font-title text-sm rounded z-10">
             <GiWorld className="inline-block" /> heaven holidays
           </div>

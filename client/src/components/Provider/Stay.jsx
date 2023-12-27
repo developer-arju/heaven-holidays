@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
+import uploadAvatar from "../../assets/forget.png";
 
 const Stay = ({ form, toggle }) => {
   const stayImage = useRef(null);
   const { register, formState, watch, getValues } = form;
   const { errors } = formState;
-  const uploadAvatar = "/src/assets/forget.png";
 
   useEffect(() => {
     const image = getValues("accomodation.image");
