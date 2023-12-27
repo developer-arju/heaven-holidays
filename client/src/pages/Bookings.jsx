@@ -57,26 +57,26 @@ const Bookings = () => {
                   >
                     <div className="h-48 aspect-video overflow-hidden">
                       <img
-                        src={`https://holidays.digimartshopy.shop/${doc.packageId?.coverImage[0]}`}
+                        src={`https://holidays.digimartshopy.shop/${doc?.packageId?.coverImage[0]}`}
                         alt=""
                         className="w-full h-full object-center"
                       />
                     </div>
                     <div className="flex-grow my-auto font-body">
                       <span className="text-[10px] font-semibold text-gray-500">
-                        {`booking id: ${doc._id}`}
+                        {`booking id: ${doc?._id}`}
                       </span>
                       <h2 className="font-bold text-[24px]">
-                        {doc.packageId.packageName}
+                        {doc?.packageId.packageName}
                       </h2>
                       <p className="font-medium text-sm text-gray-500 mb-1">
-                        {`${doc.packageId.dayCount} Days ${doc.packageId.nightCount} Night`}
+                        {`${doc?.packageId.dayCount} Days ${doc?.packageId.nightCount} Night`}
                       </p>
                       <p className="font-medium text-sm text-gray-500 mb-1">
                         Amount Paid:{" "}
                         <span>
                           <BiRupee className="inline text-base" />
-                          {doc.paidAmount.toLocaleString()}
+                          {doc?.paidAmount.toLocaleString()}
                         </span>
                       </p>
                       <p className="font-medium text-sm text-gray-500 mb-1">
@@ -88,9 +88,9 @@ const Bookings = () => {
                       <p className="font-medium text-sm text-gray-500 mb-1">
                         Travellers:{" "}
                         <span>
-                          {doc.packageId.children !== 0
-                            ? `${doc.packageId.adults} Adults ${doc.packageId.children} Child`
-                            : `${doc.packageId.adults} Adults`}
+                          {doc?.packageId.children !== 0
+                            ? `${doc?.packageId.adults} Adults ${doc?.packageId.children} Child`
+                            : `${doc?.packageId.adults} Adults`}
                         </span>
                       </p>
                       <div className="flex flex-wrap gap-2 justify-between items-center font-medium text-xs mt-2 ">
@@ -100,7 +100,7 @@ const Bookings = () => {
                           </p>
                         )}
                         <Link
-                          to={`/packages/details/${doc.packageId._id}`}
+                          to={`/packages/details/${doc?.packageId._id}`}
                           className="px-4 py-1.5 bg-blue-600 hover:bg-white hover:text-blue-600 ring-1 ring-blue-600 text-white text-base rounded-sm"
                         >
                           view package
