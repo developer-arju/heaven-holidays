@@ -222,13 +222,8 @@ const PackgeDetails = () => {
               <div className="flex flex-col rounded-lg bg-gray-400 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] max-w-xl mx-auto md:flex-row">
                 <img
                   className="w-full rounded-t-lg object-cover md:w-72 aspect-video md:rounded-none md:rounded-l-lg"
-                  src={
-                    packageData?.dailySchedules[currDayIdx].accomodation
-                      .image !== ""
-                      ? `https://holidays.digimartshopy.shop/${packageData?.dailySchedules[currDayIdx]?.accomodation?.image}`
-                      : nullStayImg
-                  }
-                  alt=""
+                  src={`https://holidays.digimartshopy.shop/${packageData?.dailySchedules[currDayIdx].accomodation.image}`}
+                  alt="accomodation place"
                 />
 
                 <div className="flex flex-col mx-auto p-6 text-white">
