@@ -90,7 +90,7 @@ const ImageUpload = ({
 
     let image = document.createElement("img");
     image.classList.add("w-24", "h-full", "object-cover");
-    image.src = `http://localhost:8000/${src}`;
+    image.src = `https://holidays.digimartshopy.shop/${src}`;
     preview.appendChild(image);
 
     let closeIcon = document.createElement("span");
