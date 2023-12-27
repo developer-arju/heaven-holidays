@@ -225,7 +225,7 @@ const PackgeDetails = () => {
                   src={
                     packageData?.dailySchedules[currDayIdx].accomodation
                       .image !== ""
-                      ? `https://holidays.digimartshopy.shop/${packageData.dailySchedules[currDayIdx].accomodation.image}`
+                      ? `https://holidays.digimartshopy.shop/${packageData?.dailySchedules[currDayIdx]?.accomodation?.image}`
                       : nullStayImg
                   }
                   alt=""
