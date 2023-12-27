@@ -57,7 +57,7 @@ const DropdownUser = () => {
           <img
             src={
               authData.brandLogo
-                ? `http://localhost:8000/logo/${authData.brandLogo}`
+                ? `https://holidays.digimartshopy.shop/logo/${authData.brandLogo}`
                 : UserOne
             }
             alt="User"

@@ -2,9 +2,11 @@ import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ImageUpload from "../../components/Provider/ImageUpload";
 import { toast } from "react-toastify";
-import { postRequest } from "../../utils/axios";
+import { postRequest, setAccessToken } from "../../utils/axios";
+import { useSelector } from "react-redux";
 
 const AddProperty = () => {
+  const { authData } = useSelector((state) => state.provider);
   const [coverImage, setCoverImage] = useState(null);
   const nameInp = useRef(null);
   const locationInp = useRef(null);
@@ -35,7 +37,7 @@ const AddProperty = () => {
       formData.append("coverImage", coverImage[i]);
     }
     const headers = { headers: { "Content-Type": "multipart/form-data" } };
-
+    setAccessToken(authData.token);
     const response = await postRequest(
       "/provider/property/add",
       formData,

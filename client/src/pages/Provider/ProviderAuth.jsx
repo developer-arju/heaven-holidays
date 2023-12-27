@@ -6,6 +6,8 @@ import { setCredentials, setError } from "../../redux/slices/providerSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Navigate, Link, useLocation } from "react-router-dom";
 
+import cardImage from "../../assets/hill-stations-kerala-tourism.jpg";
+
 const emailRegEx = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,12}$/;
 
@@ -62,7 +64,7 @@ const ProviderAuth = () => {
       <main className="w-full h-screen flex justify-center divide-x-2 items-center bg-slate-100">
         <div className="hidden sm:block overflow-hidden rounded-lg shadow-md w-64 h-96">
           <img
-            src="/src/assets/hill-stations-kerala-tourism.jpg"
+            src={cardImage}
             alt="hill-stations-kerala-tourism.jpg"
             className="object-cover"
           />
