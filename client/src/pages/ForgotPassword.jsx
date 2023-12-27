@@ -5,6 +5,8 @@ import LogoIcon from "../components/LogoIcon";
 import { ToastContainer, toast } from "react-toastify";
 import { BeatLoader } from "react-spinners";
 
+import keyIcon from "../assets/forget.png";
+
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
 
@@ -81,7 +83,7 @@ const ForgotPassword = () => {
           </div>
         </div>
         <div className="md:col-span-3 hidden md:flex justify-center items-center w-full h-full bg-amber-200">
-          <img src="/src/assets/forget.png" alt="forget.png" />
+          <img src={keyIcon} alt="forget.png" />
         </div>
       </div>
     </>

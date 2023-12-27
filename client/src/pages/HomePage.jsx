@@ -7,7 +7,10 @@ import Banner from "../components/Banner";
 import FeaturedRow from "../components/FeaturedRow";
 import Footer from "../components/Footer";
 
-const sampleImage = "src/assets/ayurveda-kerala-tourism.jpg";
+import headerImg1 from "../assets/boat-races-kerala-tourism.jpg";
+import headerImg2 from "../assets/art-forms-kerala-tourism.jpg";
+import headerImg3 from "../assets/hill-stations-kerala-tourism.jpg";
+import headerImg4 from "../assets/ayurveda-kerala-tourism.jpg";
 
 const HomePage = () => {
   const [newPackages, setNewPackages] = useState(null);
@@ -66,32 +69,16 @@ const HomePage = () => {
         <div className="flex justify-center md:justify-end">
           <div className="flex  gap-2" onMouseOver={(e) => handleMouseOver(e)}>
             <div className="overflow-hidden rounded-md transition ease-in-out  duration-300">
-              <img
-                src="src/assets/boat-races-kerala-tourism.jpg"
-                alt=""
-                className="w-36 h-36 object-cover"
-              />
+              <img src={headerImg1} alt="" className="w-36 h-36 object-cover" />
             </div>
             <div className="overflow-hidden rounded-md transition ease-in-out  duration-300">
-              <img
-                src="src/assets/art-forms-kerala-tourism.jpg"
-                alt=""
-                className="w-16 h-36 object-cover"
-              />
+              <img src={headerImg2} alt="" className="w-16 h-36 object-cover" />
             </div>
             <div className="overflow-hidden rounded-md transition ease-in-out  duration-300">
-              <img
-                src="src/assets/hill-stations-kerala-tourism.jpg"
-                alt=""
-                className="w-16 h-36 object-cover"
-              />
+              <img src={headerImg3} alt="" className="w-16 h-36 object-cover" />
             </div>
             <div className="overflow-hidden rounded-md transition ease-in-out  duration-300">
-              <img
-                src="src/assets/ayurveda-kerala-tourism.jpg"
-                alt=""
-                className="w-16 h-36 object-cover"
-              />
+              <img src={headerImg4} alt="" className="w-16 h-36 object-cover" />
             </div>
           </div>
         </div>
