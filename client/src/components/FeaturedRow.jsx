@@ -46,7 +46,7 @@ const FeaturedRow = ({ doc }) => {
         </div>
         <div className="rounded-r-md w-64 overflow-hidden bg-bg-1/70 shadow-lg">
           <img
-            src={`http://localhost:8000/${doc.coverImage[0]}`}
+            src={`http://holidays.digimartshopy.shop/${doc.coverImage[0]}`}
             alt="cover-image..."
             className="w-full aspect-square object-cover"
           />
@@ -54,7 +54,7 @@ const FeaturedRow = ({ doc }) => {
       </div>
       <div
         style={{
-          background: `url(http://localhost:8000/${doc.coverImage[1]})`,
+          background: `url(http://holidays.digimartshopy.shop/${doc.coverImage[1]})`,
         }}
         className="md:hidden bg-cover  bg-no-repeat z-20 overflow-hidden w-full"
       >
