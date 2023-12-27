@@ -22,7 +22,6 @@ import NewPassword from "./pages/Provider/NewPassword";
 import ProviderDashboard from "./pages/Provider/Dashboard";
 import ProviderPackages from "./pages/Provider/Packages";
 import AddPackage from "./pages/Provider/AddPackage";
-import EditPackage from "./pages/Provider/EditPackage";
 import ProviderProperties from "./pages/Provider/Properties";
 import EditProperty from "./pages/Provider/EditProperty";
 import AddProperty from "./pages/Provider/AddProperty";
@@ -79,7 +78,6 @@ function App({ socket }) {
           <Route index element={<ProviderDashboard />} />
           <Route path="packages" element={<ProviderPackages />} />
           <Route path="packages/add" element={<AddPackage />} />
-          <Route path="packages/edit/:docId" element={<EditPackage />} />
           <Route path="properties" element={<ProviderProperties />} />
           <Route path="properties/add" element={<AddProperty />} />
           <Route
