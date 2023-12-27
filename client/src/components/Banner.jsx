@@ -51,7 +51,7 @@ const Banner = () => {
         <img
           src={
             activePackage &&
-            `http://holidays.digimartshopy.shop/${activePackage.coverImage[0]}`
+            `https://holidays.digimartshopy.shop/${activePackage.coverImage[0]}`
           }
           className="object-cover w-full h-full shadow-inner z-30"
           alt=""

@@ -67,7 +67,7 @@ const Bookings = () => {
                   >
                     <div className="h-48 aspect-video overflow-hidden">
                       <img
-                        src={`http://localhost:8000/${doc.packageId.coverImage[0]}`}
+                        src={`https://holidays.digimartshopy.shop/${doc.packageId.coverImage[0]}`}
                         alt=""
                         className="w-full h-full object-center"
                       />
@@ -146,7 +146,7 @@ const Bookings = () => {
                   >
                     <div className="h-48 aspect-video overflow-hidden">
                       <img
-                        src={`http://localhost:8000/${doc.packageId.coverImage[1]}`}
+                        src={`https://holidays.digimartshopy.shop/${doc.packageId.coverImage[1]}`}
                         alt=""
                         className="w-full h-full object-center"
                       />

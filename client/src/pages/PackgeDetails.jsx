@@ -14,6 +14,8 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSelector, useDispatch } from "react-redux";
 import { dropCredential } from "../redux/slices/userSlice";
+import nullStayImg from "../assets/munnar/attukal-waterfalls-munnar.jpg";
+
 const PackgeDetails = () => {
   const { packageId } = useParams();
   const { authData } = useSelector((state) => state.user);
@@ -88,7 +90,7 @@ const PackgeDetails = () => {
                         : "object-cover  aspect-square object-center rounded hidden"
                     }
                     alt="hero"
-                    src={`http://localhost:8000/${src}`}
+                    src={`https://holidays.digimartshopy.shop/${src}`}
                   />
                 );
               })}
@@ -106,10 +108,10 @@ const PackgeDetails = () => {
               <BsFillCaretRightFill />
             </div>
             <div className="absolute left-1/2 -translate-x-1/2 bottom-4 flex gap-2 text-neutral-50">
-              {packageData?.coverImage.map((src, index) => {
+              {packageData?.coverImage.map((index) => {
                 return (
                   <GoDotFill
-                    key={src}
+                    key={index}
                     onClick={() => setCoverImgIndex(index)}
                     className={
                       coverImgIndex === index ? "text-sky-200" : "text-white"
@@ -218,14 +220,17 @@ const PackgeDetails = () => {
               </h1>
 
               <div className="flex flex-col rounded-lg bg-gray-400 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] max-w-xl mx-auto md:flex-row">
-                {packageData?.dailySchedules[currDayIdx].accomodation.image !==
-                  "" && (
-                  <img
-                    className="w-full rounded-t-lg object-cover md:w-72 aspect-video md:rounded-none md:rounded-l-lg"
-                    src="https://tecdn.b-cdn.net/wp-content/uploads/2020/06/vertical.jpg"
-                    alt=""
-                  />
-                )}
+                <img
+                  className="w-full rounded-t-lg object-cover md:w-72 aspect-video md:rounded-none md:rounded-l-lg"
+                  src={
+                    packageData?.dailySchedules[currDayIdx].accomodation
+                      .image !== ""
+                      ? `https://holidays.digimartshopy.shop/${packageData?.dailySchedules[currDayIdx].accomodation.image}`
+                      : nullStayImg
+                  }
+                  alt=""
+                />
+
                 <div className="flex flex-col mx-auto p-6 text-white">
                   <h5 className="mb-2 text-xl font-medium">
                     {packageData?.dailySchedules[currDayIdx].accomodation.name}
@@ -258,7 +263,7 @@ const PackgeDetails = () => {
                       <div className="bg-gray-100 rounded-xl overflow-hidden shadow-xl">
                         <img
                           className="h-40 w-full object-cover object-center mb-3"
-                          src={`http://localhost:8000/${doc.image}`}
+                          src={`https://holidays.digimartshopy.shop/${doc.image}`}
                           alt="content"
                         />
                         <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font px-4">

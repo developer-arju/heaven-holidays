@@ -16,7 +16,7 @@ const FavouritePackage = ({ doc, removeHandler }) => {
           <img
             alt="ecommerce"
             className="object-cover object-center w-full h-full block"
-            src={`http://localhost:8000/${doc?.coverImage[0]}`}
+            src={`https://holidays.digimartshopy.shop/${doc?.coverImage[0]}`}
           />
         </a>
         <div className="mt-4 px-4 pb-4">

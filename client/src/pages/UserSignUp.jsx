@@ -111,7 +111,9 @@ const UserSignUp = () => {
     <>
       <Navbar />
       <ToastContainer />
-      <GoogleOAuthProvider clientId="435341855399-gnoa82e7qu6lomcefv578bvukp3vngt5.apps.googleusercontent.com">
+      <GoogleOAuthProvider
+        clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID}
+      >
         <section className="flex justify-center bg-neutral-50 py-8">
           <div className="px-2 py-4 rounded-md w-80 bg-white shadow-md ">
             <div className="flex justify-center">

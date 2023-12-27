@@ -42,7 +42,7 @@ const PackageInfo = ({ data }) => {
           </div>
           <div className="col-span-2 overflow-hidden">
             <img
-              src={`http://localhost:8000/${data.coverImage[0]}`}
+              src={`https://holidays.digimartshopy.shop/${data.coverImage[0]}`}
               className="object-cover w-full h-72 "
               alt=""
             />
@@ -53,7 +53,7 @@ const PackageInfo = ({ data }) => {
         <div
           className="relative h-96 bg-no-repeat object-contain rounded-xl shadow-[0_0_10px_theme('colors.gray.500')]"
           style={{
-            background: `url(http://localhost:8000/${data.coverImage[0]})`,
+            background: `url(https://holidays.digimartshopy.shop/${data.coverImage[0]})`,
           }}
         >
           <div className="absolute left-6 right-6 bottom-4 bg-white/40  rounded focus:bg-white/90  hover:bg-white/90 hover:shadow-md  font-body p-4">

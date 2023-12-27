@@ -22,7 +22,7 @@ const PropertyCard = ({ doc }) => {
     <div className="max-w-sm rounded overflow-hidden shadow-lg">
       <img
         className="w-full h-48"
-        src={`http://localhost:8000/${doc?.propertyImages[0]}`}
+        src={`https://holidays.digimartshopy.shop/${doc?.propertyImages[0]}`}
         alt="Sunset in the mountains"
       />
       <div className="px-6 py-2 bg-gradient-to-r from-neutral-200 via-neutral-400 to-gray-500 shadow-inner">
