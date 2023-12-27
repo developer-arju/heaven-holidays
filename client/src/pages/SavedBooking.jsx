@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { getRequest, setAccessToken, putRequest } from "../utils/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import FavouritePackage from "../components/favouritePackage";
+import FavouritePackage from "../components/FavouritePackage";
 import { toast } from "react-toastify";
 import { ClockLoader } from "react-spinners";
 import EmptyTemplate from "../components/EmptyTemplate";
