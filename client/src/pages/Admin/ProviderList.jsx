@@ -12,6 +12,8 @@ import { MdPublishedWithChanges } from "react-icons/md";
 import { FcAcceptDatabase } from "react-icons/fc";
 import { RiCloseCircleFill } from "react-icons/ri";
 
+import logoAvatar from "../../assets/user/user-03.png";
+
 import providerAvatar from "../../assets/userAvatar.png";
 const TOOLTIP_STYLE = {
   paddingLeft: "8px",
@@ -178,7 +180,11 @@ const ProviderList = () => {
                     <div className="flex items-center justify-between bg-neutral-100 p-2 rounded-md shadow-lg min-w-[840px]">
                       <div className="p-4">
                         <img
-                          src="/src/assets/user/user-03.png"
+                          src={
+                            data.brandLogo !== ""
+                              ? `https://holidays.digimartshopy.shop/logo/${data.brandLogo}`
+                              : logoAvatar
+                          }
                           alt=""
                           className="w-16 aspect-square object-cover "
                         />
