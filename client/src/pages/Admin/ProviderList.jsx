@@ -12,9 +12,8 @@ import { MdPublishedWithChanges } from "react-icons/md";
 import { FcAcceptDatabase } from "react-icons/fc";
 import { RiCloseCircleFill } from "react-icons/ri";
 
-import logoAvatar from "../../assets/user/user-03.png";
-
 import providerAvatar from "../../assets/userAvatar.png";
+
 const TOOLTIP_STYLE = {
   paddingLeft: "8px",
   paddingRight: "8px",
@@ -183,7 +182,7 @@ const ProviderList = () => {
                           src={
                             data.brandLogo !== ""
                               ? `https://holidays.digimartshopy.shop/logo/${data.brandLogo}`
-                              : logoAvatar
+                              : providerAvatar
                           }
                           alt=""
                           className="w-16 aspect-square object-cover "
@@ -285,7 +284,7 @@ const ProviderList = () => {
                       <img
                         src={
                           provider.brandLogo
-                            ? `http://localhost:8000/logo/${provider.brandLogo}`
+                            ? `https://holidays.digimartshopy.shop/logo/${provider.brandLogo}`
                             : providerAvatar
                         }
                         alt=""
