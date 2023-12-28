@@ -7,6 +7,8 @@ import { MdSend } from "react-icons/md";
 import { MoonLoader } from "react-spinners";
 import { GoDotFill } from "react-icons/go";
 
+import userAvatar from "../../assets/userAvatar.png";
+
 const Messages = ({ socket }) => {
   const [activeChat, setActiveChat] = useState(null);
   const [chats, setChats] = useState([]);
@@ -103,14 +105,14 @@ const Messages = ({ socket }) => {
                       src={
                         chat.clientId.avatar.includes("http")
                           ? chat.clientId.avatar
-                          : `http://localhost:8000/${chat.clientId.avatar}`
+                          : userAvatar // change when user profile done
                       }
                       alt=""
                       className="w-10 aspect-square rounded-full"
                     />
                   ) : (
                     <img
-                      src="/src/assets/userAvatar.png"
+                      src={userAvatar}
                       alt=""
                       className="w-10 aspect-square rounded-full"
                     />
@@ -142,14 +144,14 @@ const Messages = ({ socket }) => {
                 src={
                   activeChat.clientId.avatar.includes("http")
                     ? activeChat.clientId.avatar
-                    : `http://localhost:8000/${activeChat.clientId.avatar}`
+                    : userAvatar
                 }
                 alt=""
                 className="w-8 aspect-square rounded-full object-cover"
               />
             ) : (
               <img
-                src="/src/assets/userAvatar.png"
+                src={userAvatar}
                 alt=""
                 className="w-10 aspect-square rounded-full"
               />
