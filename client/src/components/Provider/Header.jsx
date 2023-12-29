@@ -6,7 +6,7 @@ import DropdownMessage from "./DropdownMessage";
 import DropdownNotification from "./DropdownNotification";
 import { RiMenu2Fill } from "react-icons/ri";
 
-const Header = ({ sidebarOpen, setSidebarOpen }) => {
+const Header = ({ sidebarOpen, setSidebarOpen, socket }) => {
   return (
     <header className="sticky top-0 z-40 flex w-full bg-gray-500 drop-shadow">
       <div className="flex flex-grow items-center justify-between lg:justify-end py-2 px-4 shadow-2 md:px-6 2xl:px-11">
@@ -35,7 +35,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
         <div className="flex items-center gap-3 ">
           <ul className="flex items-center gap-2 ">
             {/* <!-- Notification Menu Area --> */}
-            <DropdownNotification />
+            <DropdownNotification socket={socket} />
             {/* <!-- Notification Menu Area --> */}
           </ul>
 

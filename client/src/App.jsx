@@ -75,7 +75,7 @@ function App({ socket }) {
       {/* Provider Routes */}
       <Route path="/provider">
         <Route element={<ProviderPrivateRoutes />}>
-          <Route index element={<ProviderDashboard />} />
+          <Route index element={<ProviderDashboard socket={socket} />} />
           <Route path="packages" element={<ProviderPackages />} />
           <Route path="packages/add" element={<AddPackage />} />
           <Route path="properties" element={<ProviderProperties />} />

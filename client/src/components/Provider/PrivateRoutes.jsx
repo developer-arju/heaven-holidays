@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
@@ -6,9 +6,18 @@ import Sidebar from "./Sidebar";
 import Header from "./Header";
 import BreadCrumb from "./BreadCrumb";
 
-const PrivateRoutes = () => {
+const PrivateRoutes = ({ socket }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { authData } = useSelector((state) => state.provider);
+
+  useEffect(() => {
+    if (Object.keys(authData).length > 0) {
+      socket.emit("connect-socket", authData._id);
+    }
+  }, []);
+
+  console.log(authData);
+
   return Object.keys(authData).length > 0 ? (
     <div className="">
       {/* <!-- ===== Page Wrapper Start ===== --> */}
@@ -20,7 +29,11 @@ const PrivateRoutes = () => {
         {/* <!-- ===== Content Area Start ===== --> */}
         <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden invisible-scrollbar">
           {/* <!-- ===== Header Start ===== --> */}
-          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          <Header
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+            socket={socket}
+          />
           {/* <!-- ===== Header End ===== --> */}
 
           {/* <!-- ===== Main Content Start ===== --> */}

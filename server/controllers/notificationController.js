@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Notification from "../models/notificationModel.js";
 import { getBookingInfo } from "./bookingController.js";
+import { io, connectedSockets } from "../server.js";
 
 // create new notification
 // helper function
@@ -17,10 +18,19 @@ export const createNotification = async (bookingId) => {
       isExist.bookingId = [...isExist.bookingId, bookingId];
       isExist.save();
     } else {
-      const newNotification = Notification.create({
+      await Notification.create({
         bookingId: [bookingId],
         providerId: bookingInfo.packageId.provider,
       });
+    }
+
+    const providerSocketId = Object.keys(connectedSockets).find(
+      (key) =>
+        connectedSockets[key] === bookingInfo.packageId.provider.toString()
+    );
+
+    if (providerSocketId) {
+      io.to(providerSocketId).emit("new-notification", bookingInfo);
     }
   } catch (error) {
     console.log(error?.message);
@@ -35,7 +45,10 @@ export const getNotifications = asyncHandler(async (req, res) => {
   try {
     const notification = await Notification.findOne({ providerId }).populate({
       path: "bookingId",
-      populate: { path: "packageId", select: "packageName" },
+      populate: [
+        { path: "packageId", select: "packageName" },
+        { path: "userId", select: "-_id name" },
+      ],
     });
     if (!notification || notification.bookingId.length < 1)
       throw new Error("no notification found");

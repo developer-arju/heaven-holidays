@@ -3,11 +3,18 @@ import { Link } from "react-router-dom";
 import { getRequest, setAccessToken } from "../../utils/axios";
 import { useSelector } from "react-redux";
 
-const DropdownNotification = () => {
+const DropdownNotification = ({ socket }) => {
   const { authData } = useSelector((state) => state.provider);
+  const [notifications, setNotifications] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const trigger = useRef(null);
   const dropdown = useRef(null);
+
+  useEffect(() => {
+    socket.on("new-notification", (data) => {
+      setNotifications((prev) => [data, ...prev]);
+    });
+  }, [socket]);
 
   useEffect(() => {
     (async () => {
@@ -15,6 +22,7 @@ const DropdownNotification = () => {
       const { data, error } = await getRequest("/provider/notifications");
       if (data) {
         console.log(data);
+        setNotifications(data);
       }
       if (error) {
         console.log(error?.message);
@@ -76,62 +84,23 @@ const DropdownNotification = () => {
         </div>
 
         <ul className="flex h-auto flex-col overflow-y-auto invisible-scrollbar">
-          {/* <li>
-            <Link className="flex flex-col gap-2.5 px-4 py-3" to="#">
-              <p className="text-sm">
-                <span className="text-black">
-                  Edit your information in a swipe
-                </span>{" "}
-                Sint occaecat cupidatat non proident, sunt in culpa qui officia
-                deserunt mollit anim.
-              </p>
-
-              <p className="text-xs">12 May, 2025</p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="flex flex-col gap-2.5 border-t-2 px-4 py-3 "
-              to="#"
-            >
-              <p className="text-sm">
-                <span className="text-black">
-                  It is a long established fact
-                </span>{" "}
-                that a reader will be distracted by the readable.
-              </p>
-
-              <p className="text-xs">24 Feb, 2025</p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="flex flex-col gap-2.5 border-t-2  px-4 py-3 "
-              to="#"
-            >
-              <p className="text-sm">
-                <span className="text-black ">There are many variations</span>{" "}
-                of passages of Lorem Ipsum available, but the majority have
-                suffered
-              </p>
-
-              <p className="text-xs">04 Jan, 2025</p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="flex flex-col gap-2.5 border-t-2 px-4 py-3 "
-              to="#"
-            >
-              <p className="text-sm">
-                <span className="text-black ">There are many variations</span>{" "}
-                of passages of Lorem Ipsum available, but the majority have
-                suffered
-              </p>
-
-              <p className="text-xs">01 Dec, 2024</p>
-            </Link>
-          </li> */}
+          {notifications.length > 0 &&
+            notifications.map((data) => {
+              return (
+                <li key={data._id}>
+                  <Link
+                    className="flex flex-col px-4 py-3 border-b border-black"
+                    to="#"
+                  >
+                    <p className="text-base text-black font-body font-semibold">
+                      {data?.packageId?.packageName}
+                    </p>
+                    <p className="text-sm text-gray-600 italic">{`booked by ${data?.userId?.name}`}</p>
+                    <p className="text-xs text-right">12 May, 2025</p>
+                  </Link>
+                </li>
+              );
+            })}
         </ul>
       </div>
     </li>

@@ -150,7 +150,10 @@ export const getProviderSales = asyncHandler(async (req, res) => {
 // helper function
 export const getBookingInfo = async (id) => {
   try {
-    const booking = await Booking.findOne({ _id: id }).populate("packageId");
+    const booking = await Booking.findOne({ _id: id }).populate([
+      { path: "packageId" },
+      { path: "userId", select: "-_id name" },
+    ]);
     if (!booking) throw new Error("invalid id");
     return booking;
   } catch (error) {

@@ -16,20 +16,19 @@ const port = process.env.PORT || 4000;
 connectDB();
 
 const corsOptions = {
-  origin: "https://holidays.digimartshopy.shop",
+  origin: "http://localhost:3000",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server, {
+export const io = new Server(server, {
   cors: {
-    origin: "https://holidays.digimartshopy.shop",
+    origin: "http://localhost:3000",
   },
 });
-
-const connectedSockets = {};
+export const connectedSockets = {};
 
 app.use(cors(corsOptions));
 app.use(express.json());
