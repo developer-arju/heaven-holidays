@@ -93,15 +93,21 @@ const Bookings = () => {
                             : `${doc?.packageId?.adults} Adults`}
                         </span>
                       </p>
-                      <div className="flex flex-wrap gap-2 justify-between items-center font-medium text-xs mt-2 ">
-                        {remainingDays > -1 && (
+                      <div
+                        className={
+                          remainingDays > 0
+                            ? "flex flex-wrap gap-2 justify-between items-center font-medium text-xs mt-2"
+                            : "flex flex-wrap gap-2 justify-end items-center font-medium text-xs mt-2"
+                        }
+                      >
+                        {remainingDays > 0 && (
                           <p className="px-4 py-1 rounded-full bg-green-200">
                             {`your trip starts in ${remainingDays} days`}
                           </p>
                         )}
                         <Link
                           to={`/packages/details/${doc?.packageId?._id}`}
-                          className="px-4 py-1.5 bg-blue-600 hover:bg-white hover:text-blue-600 ring-1 ring-blue-600 text-white text-base rounded-sm"
+                          className="justify-self-end px-4 py-1.5 bg-blue-600 hover:bg-white hover:text-blue-600 ring-1 ring-blue-600 text-white text-base rounded-sm"
                         >
                           view package
                         </Link>

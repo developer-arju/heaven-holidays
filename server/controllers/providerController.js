@@ -283,3 +283,20 @@ export const changeRegistrationStatus = asyncHandler(async (req, res) => {
     throw error;
   }
 });
+
+// @desc Find all active providers count for admin dashboard
+// route GET /api/admin/card/provider-count
+// @access Private
+export const findActiveProviderCount = asyncHandler(async (req, res) => {
+  try {
+    const providerCount = await Provider.aggregate([
+      { $match: { blocked: false } },
+      { $count: "providerCount" },
+    ]);
+    return res.status(200).json(providerCount[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+    throw error;
+  }
+});

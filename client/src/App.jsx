@@ -103,7 +103,7 @@ function App({ socket }) {
       {/* Admin Routes */}
       <Route path="/admin">
         <Route element={<AdminPrivateRoutes socket={socket} />}>
-          <Route index element={<AdminDashboard />} />
+          <Route index element={<AdminDashboard socket={socket} />} />
           <Route path="providers" element={<ProviderList />} />
           <Route path="users" element={<UsersList />} />
           <Route path="bookings" element={<AdminBookings />} />

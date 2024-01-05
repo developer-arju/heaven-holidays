@@ -14,9 +14,11 @@ import {
   changePropertyStatus,
   getSinglePropertyDetails,
   updatePropertyDetails,
+  findProviderPropertyCount,
 } from "../controllers/propertyController.js";
 import {
   addNewPackage,
+  findProviderActivePackages,
   getAllPackages,
   toggleAvailability,
 } from "../controllers/packageController.js";
@@ -26,8 +28,18 @@ import {
   logoUpload,
   packageUpload,
 } from "../utils/multer.js";
-import { getProviderSales } from "../controllers/bookingController.js";
-import { getNotifications } from "../controllers/notificationController.js";
+import {
+  changeBookingStatus,
+  findRecentBookings,
+  getProviderBookingCount,
+  getProviderChartData,
+  getProviderRevenue,
+  getProviderSales,
+} from "../controllers/bookingController.js";
+import {
+  deleteNotifications,
+  getNotifications,
+} from "../controllers/notificationController.js";
 const router = express.Router();
 
 router.post("/", registerProvider);
@@ -62,5 +74,17 @@ router.get("/packages", providerProtect, getAllPackages);
 router.post("/package/availability", providerProtect, toggleAvailability);
 router.get("/bookings", providerProtect, getProviderSales);
 router.get("/notifications", providerProtect, getNotifications);
+router.post("/notifications/clear", providerProtect, deleteNotifications);
+router.get("/card/booking-count", providerProtect, getProviderBookingCount);
+router.get("/card/revenue", providerProtect, getProviderRevenue);
+router.get(
+  "/card/active-packages",
+  providerProtect,
+  findProviderActivePackages
+);
+router.get("/card/property-count", providerProtect, findProviderPropertyCount);
+router.get("/bookings/recent", providerProtect, findRecentBookings);
+router.get("/chart", providerProtect, getProviderChartData);
+router.post("/booking-status/change", providerProtect, changeBookingStatus);
 
 export default router;

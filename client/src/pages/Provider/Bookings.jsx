@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
-import { FaEdit } from "react-icons/fa";
+import { CiMenuFries } from "react-icons/ci";
 import { MdPublishedWithChanges } from "react-icons/md";
-import { getRequest, setAccessToken } from "../../utils/axios";
+import { getRequest, postRequest, setAccessToken } from "../../utils/axios";
 
 const TOOLTIP_STYLE = {
   paddingLeft: "8px",
@@ -19,20 +19,54 @@ const TOOLTIP_STYLE = {
 
 const Bookings = () => {
   const { authData } = useSelector((state) => state.provider);
-  console.log(authData);
+  const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
     (async () => {
       setAccessToken(authData.token);
       const { data, error } = await getRequest("/provider/bookings");
       if (data) {
-        console.log(data);
+        setBookings([...data]);
       }
       if (error) {
         console.log(error?.message);
       }
     })();
   }, []);
+
+  const showHandler = (e) => {
+    e.preventDefault();
+    const parentElement = e.currentTarget.parentNode;
+    const ulRows = document.querySelectorAll(".menu-item");
+    const ulSibling = parentElement.querySelector("ul");
+    ulRows.forEach((ul) => ulSibling !== ul && ul.classList.add("hidden"));
+    ulSibling.classList.toggle("hidden");
+  };
+
+  const changeBookingStatus = async (e) => {
+    e.preventDefault();
+    const dataValue = e.target.getAttribute("data-value");
+    const bookingId = e.target.getAttribute("data-id");
+    console.log(dataValue, bookingId);
+    setAccessToken(authData.token);
+    const { data, error } = await postRequest(
+      "/provider/booking-status/change",
+      {
+        dataValue,
+        bookingId,
+      }
+    );
+    if (data) {
+      setBookings((prev) =>
+        prev.map((booking) => {
+          if (booking._id === data.bookingId) {
+            booking.status = dataValue;
+          }
+          return booking;
+        })
+      );
+    }
+  };
 
   return (
     <>
@@ -64,47 +98,90 @@ const Bookings = () => {
             </tr>
           </thead>
           <tbody>
-            <tr className="border-b">
-              <td className="whitespace-nowrap px-6 py-4 font-medium">
-                Lorem ipsum dolor sit amet.
-              </td>
-              <td className="whitespace-nowrap font-normal px-6 py-4">
-                Lorem ipsum dolor sit amet.
-              </td>
-              <td
-                className={
-                  1 === 1
-                    ? "whitespace-nowrap font-normal text-green-800 px-6 py-4"
-                    : "whitespace-nowrap font-normal text-red-800 px-6 py-4"
-                }
-              >
-                success
-              </td>
-              <td className="whitespace-nowrap font-normal px-6 py-4">
-                Lorem ipsum dolor sit amet.
-              </td>
+            {bookings.length > 0 &&
+              bookings.map((booking) => {
+                const bookingDate = new Date(booking.startDate);
+                return (
+                  <tr key={booking._id} className="border-b">
+                    <td className="whitespace-nowrap px-6 py-4 font-medium">
+                      {booking._id}
+                    </td>
+                    <td className="whitespace-nowrap font-normal px-6 py-4">
+                      {booking.packageId.packageName}
+                    </td>
+                    <td className="whitespace-nowrap font-normal px-6 py-4">
+                      {bookingDate.toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </td>
 
-              <td className="whitespace-nowrap px-6 py-4">
-                <Link to="#">
-                  <FaEdit className="text-base cursor-pointer focus:outline-none view-form" />
-                </Link>
-                <Tooltip
-                  style={TOOLTIP_STYLE}
-                  place="bottom-end"
-                  anchorSelect=".view-form"
-                  content="view/edit details"
-                />
-              </td>
-              <td className="whitespace-nowrap px-6 py-4">
-                <MdPublishedWithChanges className="text-lg text-blue-800 cursor-pointer availability focus:outline-none" />
-                <Tooltip
-                  style={TOOLTIP_STYLE}
-                  place="bottom-end"
-                  anchorSelect=".availability"
-                  content="change property status"
-                />
-              </td>
-            </tr>
+                    <td className="whitespace-nowrap font-normal px-6 py-4">
+                      {booking.status}
+                    </td>
+                    <td className="whitespace-nowrap font-normal px-6 py-4">
+                      {booking.paidAmount.toLocaleString("en-IN", {
+                        style: "currency",
+                        currency: "INR",
+                      })}
+                    </td>
+
+                    {/* <td className="whitespace-nowrap px-6 py-4">
+                      <Link to="#">
+                        <FaEdit className="text-base cursor-pointer focus:outline-none view-form" />
+                      </Link>
+                      <Tooltip
+                        style={TOOLTIP_STYLE}
+                        place="bottom-end"
+                        anchorSelect=".view-form"
+                        content="view/edit details"
+                      />
+                    </td> */}
+                    <td className="whitespace-nowrap px-6 py-4 flex justify-center items-center">
+                      <div className="relative">
+                        <button
+                          onClick={showHandler}
+                          disabled={booking.status === "complete"}
+                        >
+                          <CiMenuFries className="text-lg text-blue-800 cursor-pointer availability focus:outline-none" />
+                        </button>
+                        {booking.status !== "complete" && (
+                          <ul className="hidden menu-item absolute -left-24 -bottom-10 text-xs font-body text-white font-medium bg-neutral-600 rounded-md px-4 py-2">
+                            {booking.status !== "on-going" &&
+                              booking.status !== "complete" && (
+                                <li
+                                  onClick={changeBookingStatus}
+                                  data-value="on-going"
+                                  data-id={`${booking._id}`}
+                                  className="mb-2 cursor-pointer hover:scale-110 hover:text-blue-400"
+                                >
+                                  on-Going
+                                </li>
+                              )}
+
+                            <li
+                              onClick={changeBookingStatus}
+                              data-value="complete"
+                              data-id={`${booking._id}`}
+                              className="cursor-pointer hover:scale-110 hover:text-green-500"
+                            >
+                              Complete
+                            </li>
+                          </ul>
+                        )}
+                      </div>
+
+                      <Tooltip
+                        style={TOOLTIP_STYLE}
+                        place="bottom-end"
+                        anchorSelect=".availability"
+                        content="change status"
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
         {/* <div

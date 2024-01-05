@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { setAccessToken, getRequest, putRequest } from "../../utils/axios";
 
-import { ScaleLoader } from "react-spinners";
 import { Tooltip } from "react-tooltip";
 import { toast } from "react-toastify";
 
@@ -169,7 +168,7 @@ const ProviderList = () => {
                 size={50}
               />
             </span>
-            {!pending.response && <ScaleLoader color="#36d7b7" />}
+
             {pending.response && pending.data.length > 0 ? (
               <div className="overflow-auto">
                 {pending.data.map((data) => {

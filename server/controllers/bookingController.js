@@ -1,6 +1,7 @@
 import Booking from "../models/bookingModel.js";
 import asyncHandler from "express-async-handler";
 import { getPackage } from "./packageController.js";
+import mongoose, { Mongoose } from "mongoose";
 import { createNotification } from "./notificationController.js";
 import {
   createOrder,
@@ -101,7 +102,7 @@ export const getUserBookings = asyncHandler(async (req, res) => {
 // @access Private
 export const getAllBookings = asyncHandler(async (req, res) => {
   try {
-    const bookings = await Booking.find().populate([
+    const bookings = await Booking.find({ isPaid: true }).populate([
       {
         path: "userId",
         select: "-password -_id",
@@ -131,7 +132,7 @@ export const getProviderSales = asyncHandler(async (req, res) => {
   const { providerId } = req;
 
   try {
-    const bookings = await Booking.find({}).populate("packageId");
+    const bookings = await Booking.find({ isPaid: true }).populate("packageId");
     if (bookings.length < 1) throw new Error("can't find any bookings");
 
     const providerSale = bookings.filter(
@@ -142,6 +143,323 @@ export const getProviderSales = asyncHandler(async (req, res) => {
     res.status(200).json(providerSale);
   } catch (error) {
     res.status(400);
+    throw error;
+  }
+});
+
+// @desc Find provider booking count
+// route GET /api/provider/card/booking-count
+// @access Private
+export const getProviderBookingCount = asyncHandler(async (req, res) => {
+  const { providerId } = req;
+  try {
+    const bookings = await Booking.find({ isPaid: true }).populate("packageId");
+    const bookingCount = bookings.reduce((acc, booking) => {
+      if (booking.packageId.provider.toString() === providerId) {
+        return acc + 1;
+      }
+      return acc;
+    }, 0);
+
+    return res.status(200).json({ bookingCount });
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+    throw error;
+  }
+});
+
+// @desc Find provider revenue
+// route GET /api/provider/card/revenue
+// @access Private
+export const getProviderRevenue = asyncHandler(async (req, res) => {
+  const { providerId } = req;
+  try {
+    const bookings = await Booking.find().populate("packageId");
+    const totalProfit = bookings.reduce((acc, booking) => {
+      if (
+        booking.packageId.provider.toString() === providerId &&
+        booking.isPaid
+      ) {
+        return acc + booking?.paidAmount;
+      }
+      return acc;
+    }, 0);
+
+    return res.status(200).json({ totalProfit });
+  } catch (error) {
+    res.status(400);
+    throw error;
+  }
+});
+
+// @desc Get recent bookings of a provider
+// route GET /api/provider/bookings/recent
+// @access Private
+export const findRecentBookings = asyncHandler(async (req, res) => {
+  const { providerId } = req;
+  const currDate = new Date();
+  const oneWeekAgo = new Date(currDate);
+  oneWeekAgo.setDate(currDate.getDate() - 6);
+  oneWeekAgo.setHours(0, 0, 0, 0);
+  try {
+    const recentBookings = await Booking.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: oneWeekAgo,
+            $lt: currDate,
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "packages",
+          localField: "packageId",
+          foreignField: "_id",
+          as: "package",
+        },
+      },
+      {
+        $match: {
+          $expr: {
+            $and: [
+              {
+                $eq: [
+                  new mongoose.Types.ObjectId(providerId),
+                  { $arrayElemAt: ["$package.provider", 0] },
+                ],
+              },
+              { $eq: [true, "$isPaid"] },
+            ],
+          },
+        },
+      },
+    ]);
+
+    res.status(200).json(recentBookings);
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+    throw error;
+  }
+});
+
+// @desc Find all booking count for admin dashboard
+// route GET /api/admin/card/booking-count
+// @access Private
+export const findAllBookingCount = asyncHandler(async (req, res) => {
+  try {
+    const bookingCount = await Booking.aggregate([
+      { $match: { isPaid: true } },
+      { $count: "bookingCount" },
+    ]);
+    return res.status(200).json(bookingCount[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+    throw error;
+  }
+});
+
+// @desc Find total profit for admin dashboard
+// route GET /api/admin/card/profit
+// @access Private
+export const findTotalProfit = asyncHandler(async (req, res) => {
+  try {
+    const totalProfit = await Booking.aggregate([
+      { $match: { isPaid: true } },
+      { $group: { _id: null, totalProfit: { $sum: "$paidAmount" } } },
+      { $project: { _id: 0, totalProfit: 1 } },
+    ]);
+
+    return res.status(200).json(totalProfit[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+    throw error;
+  }
+});
+
+// @desc Get Chart Data for Admin Dashboard
+// route GET /api/admin/chart
+// @access Private
+export const getAdminChartData = asyncHandler(async (req, res) => {
+  try {
+    const currDate = new Date();
+    const currYear = currDate.getFullYear();
+    let adjYear;
+    const currMonth = currDate.getMonth();
+    if (currMonth < 3) {
+      adjYear = currYear - 1;
+    } else {
+      adjYear = currYear + 1;
+    }
+    const paidBookings = await Booking.find({ isPaid: true });
+    const chartData = {};
+    const result = new Array(12).fill(0);
+
+    paidBookings.forEach((booking) => {
+      const bookedDate = new Date(booking.createdAt);
+      let month;
+      if (bookedDate.getFullYear() === currYear) {
+        if (currYear < adjYear) {
+          if (bookedDate.getMonth() > 1) {
+            month = bookedDate.getMonth();
+          }
+        } else if (currYear > adjYear) {
+          if (bookedDate.getMonth() < 2) {
+            month = bookedDate.getMonth();
+          }
+        }
+      } else if (bookedDate.getFullYear() === adjYear) {
+        if (currYear < adjYear) {
+          if (bookedDate.getMonth() < 2) {
+            month = bookedDate.getMonth();
+          }
+        } else if (currYear > adjYear) {
+          if (bookedDate.getMonth() > 1) {
+            month = bookedDate.getMonth();
+          }
+        }
+      }
+
+      if (month || month === 0) {
+        if (chartData.hasOwnProperty(month)) {
+          chartData[month] += booking.paidAmount;
+        } else {
+          chartData[month] = booking.paidAmount;
+        }
+      }
+    });
+    console.log(chartData);
+    for (let key in chartData) {
+      let idx = parseInt(key) + 10;
+      if (idx > 11) {
+        idx = idx - 12;
+      }
+      result[idx] = chartData[key];
+    }
+    return res.status(200).json({ currYear, adjYear, result });
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+    throw error;
+  }
+});
+
+// @desc Get Provider Chart Data
+// route GET /api/provider/chart
+// @access Private
+export const getProviderChartData = asyncHandler(async (req, res) => {
+  const { providerId } = req;
+  try {
+    let adjYear;
+    const currDate = new Date();
+    const currYear = currDate.getFullYear();
+    const currMonth = currDate.getMonth();
+    if (currMonth < 3) {
+      adjYear = currYear - 1;
+    } else {
+      adjYear = currYear + 1;
+    }
+    const chartData = {};
+    const result = new Array(12).fill(0);
+
+    const paidBookings = await Booking.aggregate([
+      {
+        $lookup: {
+          from: "packages",
+          localField: "packageId",
+          foreignField: "_id",
+          as: "package",
+        },
+      },
+      {
+        $match: {
+          $expr: {
+            $and: [
+              {
+                $eq: [
+                  new mongoose.Types.ObjectId(providerId),
+                  { $arrayElemAt: ["$package.provider", 0] },
+                ],
+              },
+              { $eq: [true, "$isPaid"] },
+            ],
+          },
+        },
+      },
+    ]);
+
+    paidBookings.forEach((booking) => {
+      const bookedDate = new Date(booking.createdAt);
+      let month;
+      if (bookedDate.getFullYear() === currYear) {
+        if (currYear < adjYear) {
+          if (bookedDate.getMonth() > 1) {
+            month = bookedDate.getMonth();
+          }
+        } else if (currYear > adjYear) {
+          if (bookedDate.getMonth() < 2) {
+            month = bookedDate.getMonth();
+          }
+        }
+      } else if (bookedDate.getFullYear() === adjYear) {
+        if (currYear < adjYear) {
+          if (bookedDate.getMonth() < 2) {
+            month = bookedDate.getMonth();
+          }
+        } else if (currYear > adjYear) {
+          if (bookedDate.getMonth() > 1) {
+            month = bookedDate.getMonth();
+          }
+        }
+      }
+
+      if (month || month === 0) {
+        if (chartData.hasOwnProperty(month)) {
+          chartData[month] += booking.paidAmount;
+        } else {
+          chartData[month] = booking.paidAmount;
+        }
+      }
+    });
+
+    for (let key in chartData) {
+      let idx = parseInt(key) + 10;
+      if (idx > 11) {
+        idx = idx - 12;
+      }
+      result[idx] = chartData[key];
+    }
+    return res.status(200).json({ currYear, adjYear, result });
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+    throw error;
+  }
+});
+
+// @desc Change booking status
+// route POST /api/provider/booking-status/change
+// @access Private
+export const changeBookingStatus = asyncHandler(async (req, res) => {
+  const { dataValue, bookingId } = req.body;
+
+  try {
+    if (dataValue !== "on-going" && dataValue !== "complete")
+      throw new Error("data value not match our rules");
+
+    const booking = await Booking.findById(bookingId);
+    booking.status = dataValue;
+    await booking.save();
+    return res
+      .status(200)
+      .json({ bookingId, message: `booking status changed to ${dataValue}` });
+  } catch (error) {
+    console.log(error);
+    res.status(200);
     throw error;
   }
 });

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import { getRequest, setAccessToken } from "../../utils/axios";
 
 import { FcFaq } from "react-icons/fc";
@@ -16,6 +17,9 @@ const Messages = ({ socket }) => {
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState("");
   const { authData } = useSelector((state) => state.admin);
+  const location = useLocation();
+  const queryParam = new URLSearchParams(location.search);
+  const chatId = queryParam.get("active");
 
   useEffect(() => {
     (async () => {
@@ -25,6 +29,13 @@ const Messages = ({ socket }) => {
       const { data, error } = await getRequest("/admin/messages");
       setLoading(false);
       if (data) {
+        if (chatId) {
+          data.forEach((chat) => {
+            if (chat._id === chatId) {
+              setActiveChat(chat);
+            }
+          });
+        }
         setChats([...data]);
       }
       if (error) {

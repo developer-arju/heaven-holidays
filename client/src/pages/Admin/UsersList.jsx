@@ -28,7 +28,6 @@ const UsersList = () => {
     return Math.ceil(users.length / 5);
   }, [users.length]);
   const fetchUsers = async () => {
-    console.log(authData.token);
     setAccessToken(authData.token);
     const response = await getRequest("/admin/users");
     if (response.data) {

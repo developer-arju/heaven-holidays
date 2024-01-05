@@ -270,6 +270,24 @@ export const fetchAllPackages = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc Get active packages count for provider
+// route GET /api/provider/card/active-packages
+// @access Private
+export const findProviderActivePackages = asyncHandler(async (req, res) => {
+  const { providerId } = req;
+  try {
+    const activePackages = await Package.find({
+      provider: providerId,
+      isAvailable: true,
+    });
+    return res.status(200).json({ activeCount: activePackages.length });
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+    throw error;
+  }
+});
+
 // @desc retrive package info
 export function getPackage(id) {
   return new Promise(async (resolve, reject) => {

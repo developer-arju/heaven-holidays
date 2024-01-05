@@ -82,29 +82,6 @@ const Bookings = () => {
     setSingleView({ show: true, doc: doc[0] });
   };
 
-  //   const statusChange = async (e) => {
-  //     e.stopPropagation();
-  //     console.log(modal);
-  //     const { data, error } = await putRequest("/admin/Bookings/status-toggle", {
-  //       providerId: modal.payload,
-  //     });
-  //     if (data) {
-  //       setBookings((prev) => {
-  //         return prev.map((doc) => {
-  //           if (doc._id === data._id) {
-  //             return data;
-  //           }
-  //           return doc;
-  //         });
-  //       });
-  //     }
-  //     if (error) {
-  //       console.log(error.message);
-  //       toast.error(error.message);
-  //     }
-  //     setModal({ active: false, payload: "" });
-  //   };
-
   const fileDownloadHandler = (id) => {
     const doc = Bookings.filter((obj) => obj._id === id);
     const element = ReactDOMServer.renderToString(Invoice({ doc: doc[0] }));
@@ -128,15 +105,6 @@ const Bookings = () => {
     <>
       <div className="flex justify-between mx-4 px-4 mb-4 items-center">
         <div className="font-body font-bold text-2xl">Bookings</div>
-        {/* <Link
-          to="#"
-          data-tooltip-id="a"
-          data-tooltip-content="Pending Requests"
-          className="p-2 rounded-full bg-neutral-200 shadow-lg text-2xl"
-        >
-          <FcAcceptDatabase />
-        </Link>
-        <Tooltip style={TOOLTIP_STYLE} id="a" place="bottom-start" /> */}
       </div>
       <div className="mt-2 overflow-x-auto">
         {Bookings.length > 0 ? (
@@ -219,19 +187,19 @@ const Bookings = () => {
                         content="save invoice"
                       />
                     </td>
-                    <td className="whitespace-nowrap p-4">
+                    {/* <td className="whitespace-nowrap p-4">
                       <FcCancel
                         className={
                           !doc.cancelled
                             ? "text-lg text-red-600 cursor-pointer availability  focus:outline-none"
                             : "text-lg text-red-60 opacity-40 cursor-pointer availability focus:outline-none"
                         }
-                        // onClick={() =>
-                        //   setModal({
-                        //     active: !modal.active,
-                        //     payload: doc._id,
-                        //   })
-                        // }
+                        onClick={() =>
+                          setModal({
+                            active: !modal.active,
+                            payload: doc._id,
+                          })
+                        }
                       />
                       {!doc.cancelled && (
                         <Tooltip
@@ -241,7 +209,7 @@ const Bookings = () => {
                           content="cancel"
                         />
                       )}
-                    </td>
+                    </td> */}
                   </tr>
                 );
               })}

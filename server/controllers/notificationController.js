@@ -58,3 +58,20 @@ export const getNotifications = asyncHandler(async (req, res) => {
     throw error;
   }
 });
+
+// @desc Clear All Notifications
+// route POST /api/provider/notification/clear
+// @access Private
+export const deleteNotifications = asyncHandler(async (req, res) => {
+  const { providerId } = req;
+  try {
+    const notificationDoc = await Notification.findOne({ providerId });
+    if (!notificationDoc) throw new Error("provider not found");
+    notificationDoc.bookingId = [];
+    await notificationDoc.save();
+    return res.status(200).json({ message: "success" });
+  } catch (error) {
+    res.status(400);
+    throw error;
+  }
+});

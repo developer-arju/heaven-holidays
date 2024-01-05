@@ -287,3 +287,20 @@ export const updatePassword = asyncHandler(async (req, res) => {
     throw error;
   }
 });
+
+// @desc Find Active Users Count for admin dashboard
+// route GET /api/admin/card/users-count
+// @access Private
+export const findActiveUsersCount = asyncHandler(async (req, res) => {
+  try {
+    const usersCount = await User.aggregate([
+      { $match: { isActive: true } },
+      { $count: "usersCount" },
+    ]);
+    return res.status(200).json(usersCount[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+    throw error;
+  }
+});

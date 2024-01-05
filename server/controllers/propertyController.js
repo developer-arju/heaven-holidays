@@ -215,3 +215,18 @@ export const getProperties = asyncHandler(async (req, res) => {
     res.status(400).json(error);
   }
 });
+
+// @desc Find provider property count
+// route GET /api/provider/card/property-count
+// @access Private
+export const findProviderPropertyCount = asyncHandler(async (req, res) => {
+  const { providerId } = req;
+  try {
+    const properties = await Property.find({ providerId });
+    return res.status(200).json({ propertyCount: properties.length });
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+    throw error;
+  }
+});

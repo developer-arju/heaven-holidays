@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { getRequest, setAccessToken } from "../../utils/axios";
+import { getRequest, postRequest, setAccessToken } from "../../utils/axios";
 import { useSelector } from "react-redux";
 
 const DropdownNotification = ({ socket }) => {
@@ -45,6 +45,19 @@ const DropdownNotification = ({ socket }) => {
     return () => document.removeEventListener("click", clickHandler);
   }, [dropdown, trigger]);
 
+  const notificationDeleteHandler = async (e) => {
+    e.preventDefault();
+    setAccessToken(authData.token);
+    const { data, error } = await postRequest("/provider/notifications/clear");
+    if (data) {
+      console.log(data);
+      setNotifications([]);
+    }
+    if (error) {
+      console.log(error?.message);
+    }
+  };
+
   return (
     <li className="relative">
       <Link
@@ -78,7 +91,10 @@ const DropdownNotification = ({ socket }) => {
       >
         <div className="flex justify-between items-center px-4 py-3 border-b-2">
           <h5 className="text-sm font-medium">Notification</h5>
-          <p className="text-[12px] font-medium text-red-500 [text-shadow:_0_1px_1px_rgb(254_202_202_/_60)] cursor-pointer hover:scale-110 transition-all">
+          <p
+            onClick={notificationDeleteHandler}
+            className="text-[12px] font-medium text-red-500 [text-shadow:_0_1px_1px_rgb(254_202_202_/_60)] cursor-pointer hover:scale-110 transition-all"
+          >
             Clear All
           </p>
         </div>
@@ -86,6 +102,7 @@ const DropdownNotification = ({ socket }) => {
         <ul className="flex h-auto flex-col overflow-y-auto invisible-scrollbar">
           {notifications.length > 0 &&
             notifications.map((data) => {
+              const bookedDate = new Date(data?.createdAt);
               return (
                 <li key={data._id}>
                   <Link
@@ -96,7 +113,13 @@ const DropdownNotification = ({ socket }) => {
                       {data?.packageId?.packageName}
                     </p>
                     <p className="text-sm text-gray-600 italic">{`booked by ${data?.userId?.name}`}</p>
-                    <p className="text-xs text-right">12 May, 2025</p>
+                    <p className="text-xs text-right">
+                      {bookedDate.toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
                   </Link>
                 </li>
               );

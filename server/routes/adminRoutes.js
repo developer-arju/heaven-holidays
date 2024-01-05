@@ -5,8 +5,10 @@ import {
   toggleProviderStatus,
   getPendingRequests,
   changeRegistrationStatus,
+  findActiveProviderCount,
 } from "../controllers/providerController.js";
 import {
+  findActiveUsersCount,
   getAllUsers,
   toggleUserStatus,
 } from "../controllers/userController.js";
@@ -15,7 +17,12 @@ import {
   toggleAvailability,
   fetchAllPackages,
 } from "../controllers/packageController.js";
-import { getAllBookings } from "../controllers/bookingController.js";
+import {
+  findAllBookingCount,
+  findTotalProfit,
+  getAdminChartData,
+  getAllBookings,
+} from "../controllers/bookingController.js";
 import { adminProtect } from "../middleware/authMiddleware.js";
 import { loadChatLists } from "../controllers/messageController.js";
 const router = express.Router();
@@ -34,5 +41,10 @@ router.put("/providers/status-toggle", adminProtect, toggleProviderStatus);
 router.put("/banner/set", adminProtect, setBanner);
 router.put("/package/availability", adminProtect, toggleAvailability);
 router.get("/messages", adminProtect, loadChatLists);
+router.get("/card/booking-count", adminProtect, findAllBookingCount);
+router.get("/card/profit", adminProtect, findTotalProfit);
+router.get("/card/provider-count", adminProtect, findActiveProviderCount);
+router.get("/card/users-count", adminProtect, findActiveUsersCount);
+router.get("/chart", adminProtect, getAdminChartData);
 
 export default router;
