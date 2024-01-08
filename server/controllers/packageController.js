@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Package from "../models/packageModel.js";
+import fs from "fs";
 
 // @desc Add new Package
 // route POST /api/provider/package/add
@@ -296,10 +297,28 @@ export const editPackageBasicInfo = asyncHandler(async (req, res) => {
   const { packageId } = req.params;
   const { packageName, adults, children, price, summary } = req.body;
   const files = req.files;
+  const directoryPath = "server/public/";
   let { phoneNumbers } = req.body;
   phoneNumbers = phoneNumbers !== "" ? phoneNumbers.split(",") : [];
+
   try {
     const existPackageInfo = await Package.findById(packageId);
+    if (files.length > 0) {
+      existPackageInfo.coverImage.forEach((fileName) => {
+        const filePath = directoryPath + fileName;
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+          if (err) {
+            console.log(err?.message);
+          } else {
+            fs.unlink(filePath, (err) => {
+              if (err) {
+                console.log(err.message);
+              }
+            });
+          }
+        });
+      });
+    }
     if (!existPackageInfo)
       throw new Error("package id is invalid or incorrect");
     existPackageInfo.packageName =
