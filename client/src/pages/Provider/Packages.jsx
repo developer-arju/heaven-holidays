@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { HiViewGridAdd } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Tooltip } from "react-tooltip";
 import { MdPublishedWithChanges } from "react-icons/md";
@@ -21,6 +21,8 @@ const TOOLTIP_STYLE = {
 };
 
 const Packages = () => {
+  const location = useLocation();
+  const queryParam = new URLSearchParams(location.search);
   const [modal, setModal] = useState({ active: false, payload: "" });
   const [isLoaded, setIsLoaded] = useState(false);
   const [packages, setPackages] = useState([]);
@@ -33,6 +35,13 @@ const Packages = () => {
   }, [packages]);
 
   useEffect(() => {
+    if (queryParam.get("update") === "success") {
+      toast.success("package details updated");
+
+      const url = new URL(window.location.href);
+      url.searchParams.delete("update");
+      window.history.replaceState({}, document.title, url.toString());
+    }
     const getPackages = async () => {
       setAccessToken(token);
       const { data, error, message } = await getRequest("/provider/packages");
@@ -141,7 +150,8 @@ const Packages = () => {
                   <th scope="col" className="px-6 py-4">
                     Price
                   </th>
-                  <th scope="col" className="px-6 py-4"></th>
+                  <th scope="col" className="px-3 py-4"></th>
+                  <th scope="col" className="px-3 py-4"></th>
                 </tr>
               </thead>
               <tbody>
@@ -175,7 +185,18 @@ const Packages = () => {
                         &#8377; {doc.price.toLocaleString("en-IN")}
                       </td>
 
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td className="whitespace-nowrap px-3 py-4">
+                        <Link to={`edit/${doc._id}`}>
+                          <FaEdit className=" text-gray-600  cursor-pointer edit focus:outline-none" />
+                        </Link>
+                        <Tooltip
+                          style={TOOLTIP_STYLE}
+                          place="bottom-end"
+                          anchorSelect=".edit"
+                          content="edit package"
+                        />
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4">
                         <MdPublishedWithChanges
                           className="text-lg text-blue-800 cursor-pointer status-change focus:outline-none"
                           onClick={() =>
@@ -185,6 +206,7 @@ const Packages = () => {
                             })
                           }
                         />
+
                         <Tooltip
                           style={TOOLTIP_STYLE}
                           place="bottom-end"

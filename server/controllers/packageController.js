@@ -162,7 +162,7 @@ export const getPackages = asyncHandler(async (req, res) => {
 });
 
 // @desc Send Single Package Details
-// route GET /api/users/booking/:packageId
+// route GET /api/users/booking/:packageId || /api/provider/package:packageId
 // @access Public
 export const getSinglePackageDetails = asyncHandler(async (req, res) => {
   const { packageId } = req.params;
@@ -283,6 +283,46 @@ export const findProviderActivePackages = asyncHandler(async (req, res) => {
     return res.status(200).json({ activeCount: activePackages.length });
   } catch (error) {
     console.log(error);
+    res.status(400);
+    throw error;
+  }
+});
+
+// @desc Edit Package Basic Info
+// route POST /api/provider/package/edit:packageId
+// @access Private
+export const editPackageBasicInfo = asyncHandler(async (req, res) => {
+  const { providerId } = req;
+  const { packageId } = req.params;
+  const { packageName, adults, children, price, summary } = req.body;
+  const files = req.files;
+  let { phoneNumbers } = req.body;
+  phoneNumbers = phoneNumbers !== "" ? phoneNumbers.split(",") : [];
+  try {
+    const existPackageInfo = await Package.findById(packageId);
+    if (!existPackageInfo)
+      throw new Error("package id is invalid or incorrect");
+    existPackageInfo.packageName =
+      packageName !== "" ? packageName : existPackageInfo.packageName;
+    existPackageInfo.adults =
+      adults !== "" ? parseInt(adults) : existPackageInfo.adults;
+    existPackageInfo.children =
+      children !== "" ? parseInt(children) : existPackageInfo.children;
+    existPackageInfo.phoneNumbers =
+      phoneNumbers.length > 0 ? phoneNumbers : existPackageInfo.phoneNumbers;
+    existPackageInfo.summary =
+      summary !== "" ? summary : existPackageInfo.summary;
+    existPackageInfo.price =
+      price !== "" ? parseInt(price) : existPackageInfo.price;
+    existPackageInfo.coverImage =
+      files.length > 0
+        ? files.map((file) => `images/packages/${providerId}/${file.filename}`)
+        : existPackageInfo.coverImage;
+    await existPackageInfo.save();
+
+    return res.status(200).json({ message: "package info update success" });
+  } catch (error) {
+    console.log(error?.message);
     res.status(400);
     throw error;
   }

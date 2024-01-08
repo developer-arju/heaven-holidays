@@ -81,6 +81,9 @@ const Bookings = () => {
                 Booking Id
               </th>
               <th scope="col" className="px-6 py-4">
+                Customer Name
+              </th>
+              <th scope="col" className="px-6 py-4">
                 Package Name
               </th>
               <th scope="col" className="px-6 py-4">
@@ -105,6 +108,9 @@ const Bookings = () => {
                   <tr key={booking._id} className="border-b">
                     <td className="whitespace-nowrap px-6 py-4 font-medium">
                       {booking._id}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 font-medium">
+                      {booking?.identityProof?.name}
                     </td>
                     <td className="whitespace-nowrap font-normal px-6 py-4">
                       {booking.packageId.packageName}

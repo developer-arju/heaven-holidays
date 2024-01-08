@@ -46,6 +46,7 @@ import AdminPrivateRoutes from "./components/admin/PrivateRoutes";
 import PersonalInfo from "./components/Provider/PersonalInfo";
 import BussinessInfo from "./components/Provider/BussinessInfo";
 import PrivateRoutes from "./components/PrivateRoutes";
+import EditPackageBasicInfo from "./pages/Provider/EditPackageBasicInfo";
 
 function App({ socket }) {
   return (
@@ -77,6 +78,10 @@ function App({ socket }) {
         <Route element={<ProviderPrivateRoutes socket={socket} />}>
           <Route index element={<ProviderDashboard />} />
           <Route path="packages" element={<ProviderPackages />} />
+          <Route
+            path="packages/edit/:packageId"
+            element={<EditPackageBasicInfo />}
+          />
           <Route path="packages/add" element={<AddPackage />} />
           <Route path="properties" element={<ProviderProperties />} />
           <Route path="properties/add" element={<AddProperty />} />

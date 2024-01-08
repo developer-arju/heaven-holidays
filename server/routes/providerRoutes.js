@@ -18,8 +18,10 @@ import {
 } from "../controllers/propertyController.js";
 import {
   addNewPackage,
+  editPackageBasicInfo,
   findProviderActivePackages,
   getAllPackages,
+  getSinglePackageDetails,
   toggleAvailability,
 } from "../controllers/packageController.js";
 import { providerProtect } from "../middleware/authMiddleware.js";
@@ -86,5 +88,12 @@ router.get("/card/property-count", providerProtect, findProviderPropertyCount);
 router.get("/bookings/recent", providerProtect, findRecentBookings);
 router.get("/chart", providerProtect, getProviderChartData);
 router.post("/booking-status/change", providerProtect, changeBookingStatus);
+router.get("/package/:packageId", providerProtect, getSinglePackageDetails);
+router.post(
+  "/package/edit/:packageId",
+  providerProtect,
+  packageUpload.any(),
+  editPackageBasicInfo
+);
 
 export default router;

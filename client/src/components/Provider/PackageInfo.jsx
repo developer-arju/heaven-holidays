@@ -224,7 +224,20 @@ const PackageInfo = ({
             {...register("coverImage", {
               required: "upload images",
               validate: (files) => {
-                return files.length <= 2 || "upload maximum 2 images only";
+                if (!files || files.length === 0) {
+                  return "Please upload at least one image";
+                }
+
+                for (let i = 0; i < files.length; i++) {
+                  const file = files[i];
+                  const allowedImageTypes = ["image/jpeg", "image/png"];
+
+                  if (!allowedImageTypes.includes(file.type)) {
+                    return "Please upload only images (JPEG, PNG)";
+                  }
+                }
+
+                return files.length <= 2;
               },
             })}
             className="focus:outline-none file:hidden text-gray-600 p-2"
