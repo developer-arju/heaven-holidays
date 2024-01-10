@@ -119,6 +119,7 @@ const options = {
 const ChartOne = () => {
   const { authData } = useSelector((state) => state.admin);
   const [series, setSeries] = useState([]);
+  const [loaded, setLoaded] = useState(false);
   const [year, setYear] = useState([0, 0]);
 
   useEffect(() => {
@@ -126,12 +127,16 @@ const ChartOne = () => {
       setAccessToken(authData.token);
       const { data, error } = await getRequest("/admin/chart");
       if (data) {
-        console.log(data);
+        const maxAmount = Math.max(...data.result);
+        if (maxAmount > options.yaxis.max) {
+          options.yaxis.max = maxAmount;
+        }
         if (data.currYear < data.adjYear) {
           setYear([data.currYear, data.adjYear]);
         } else if (data.currYear > data.adjYear) {
           setYear([data.adjYear, data.currYear]);
         }
+        setLoaded(true);
         setSeries([{ name: "revenue", data: data.result }]);
       }
       if (error) {
@@ -154,29 +159,18 @@ const ChartOne = () => {
             </div>
           </div>
         </div>
-        {/* <div className="flex w-full max-w-[11.25rem] justify-end">
-          <div className="inline-flex items-center rounded-md bg-whiter p-1.5">
-            <button className="rounded bg-white py-1 px-3 text-xs font-medium text-black shadow-card hover:bg-white hover:shadow-card">
-              Day
-            </button>
-            <button className="rounded py-1 px-3 text-xs font-medium text-black hover:bg-white hover:shadow-card">
-              Week
-            </button>
-            <button className="rounded py-1 px-3 text-xs font-medium text-black hover:bg-white hover:shadow-card">
-              Month
-            </button>
-          </div>
-        </div> */}
       </div>
 
       <div>
         <div id="chartOne" className="-ml-5">
-          <ReactApexChart
-            options={options}
-            series={series}
-            type="area"
-            height={350}
-          />
+          {loaded && (
+            <ReactApexChart
+              options={options}
+              series={series}
+              type="area"
+              height={350}
+            />
+          )}
         </div>
       </div>
     </div>
