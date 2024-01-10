@@ -6,7 +6,7 @@ export function setAccessToken(token) {
 }
 
 const appInstance = axios.create({
-  baseURL: `${import.meta.env.VITE_SERVER_URI}`,
+  baseURL: `${import.meta.env.VITE_SERVER_URI}/api`,
   headers: {
     "Content-Type": "application/json",
   },
