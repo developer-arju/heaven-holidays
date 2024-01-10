@@ -47,6 +47,7 @@ import PersonalInfo from "./components/Provider/PersonalInfo";
 import BussinessInfo from "./components/Provider/BussinessInfo";
 import PrivateRoutes from "./components/PrivateRoutes";
 import EditPackageBasicInfo from "./pages/Provider/EditPackageBasicInfo";
+import ShowBookingDetails from "./pages/Provider/ShowBookingDetails";
 
 function App({ socket }) {
   return (
@@ -95,6 +96,7 @@ function App({ socket }) {
             element={<EditPriceOption />}
           />
           <Route path="bookings" element={<ProviderBussiness />} />
+          <Route path="bookings/view/:id" element={<ShowBookingDetails />} />
         </Route>
         <Route path="auth" element={<ProviderAuth />} />
         <Route path="reset" element={<ResetPassword />} />

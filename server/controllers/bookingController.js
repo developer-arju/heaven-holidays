@@ -1,7 +1,7 @@
 import Booking from "../models/bookingModel.js";
 import asyncHandler from "express-async-handler";
 import { getPackage } from "./packageController.js";
-import mongoose, { Mongoose } from "mongoose";
+import mongoose from "mongoose";
 import { createNotification } from "./notificationController.js";
 import {
   createOrder,
@@ -17,6 +17,26 @@ export const createBooking = asyncHandler(async (req, res) => {
   const { userId } = req;
   const { title, name, documentName, documentNumber } = form;
   try {
+    const currentBookings = await Booking.find({ isPaid: true });
+    const newBookingDate = new Date(startDate);
+    let count = 0;
+
+    currentBookings.forEach((booking) => {
+      const currentBookingDate = new Date(booking.startDate);
+      if (booking.packageId.toString() === packageId) {
+        if (
+          newBookingDate.toDateString() === currentBookingDate.toDateString()
+        ) {
+          count += 1;
+        }
+      }
+    });
+    if (count >= parseInt(process.env.DAILY_BOOKING_LIMIT)) {
+      throw new Error(
+        "package booking limit exceeds please try another date for book this package"
+      );
+    }
+
     const bookItem = await getPackage(packageId);
     const newBooking = await Booking.create({
       userId,
@@ -38,8 +58,8 @@ export const createBooking = asyncHandler(async (req, res) => {
       return res.status(200).json(order);
     }
   } catch (error) {
-    console.log(error);
-    res.status(400).json(error);
+    res.status(400);
+    throw error;
   }
 });
 
@@ -459,7 +479,23 @@ export const changeBookingStatus = asyncHandler(async (req, res) => {
       .json({ bookingId, message: `booking status changed to ${dataValue}` });
   } catch (error) {
     console.log(error);
-    res.status(200);
+    res.status(400);
+    throw error;
+  }
+});
+
+// @desc Get Single booking info
+// route GET /api/provider/booking/view/:id
+// @access Private
+export const getSingleBookingInfo = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  try {
+    const select = await Booking.findById(id).populate("userId packageId");
+
+    return res.status(200).json(select);
+  } catch (error) {
+    console.log(error);
+    res.status(400);
     throw error;
   }
 });

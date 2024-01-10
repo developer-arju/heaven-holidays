@@ -37,6 +37,7 @@ import {
   getProviderChartData,
   getProviderRevenue,
   getProviderSales,
+  getSingleBookingInfo,
 } from "../controllers/bookingController.js";
 import {
   deleteNotifications,
@@ -95,5 +96,6 @@ router.post(
   packageUpload.any(),
   editPackageBasicInfo
 );
+router.get("/booking/view/:id", providerProtect, getSingleBookingInfo);
 
 export default router;

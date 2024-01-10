@@ -142,6 +142,7 @@ const BookPackages = () => {
   const submitInfo = async (form, e) => {
     e.preventDefault();
     setBtnLoader(true);
+    setAccessToken(authData.token);
     const { data, error, message } = await postRequest("/users/new/package", {
       startDate,
       packageId,
@@ -150,9 +151,9 @@ const BookPackages = () => {
     if (data) {
       initPayment(data);
     }
-    if (error || message) {
-      console.log(error || message);
-      toast.error(error?.message || message);
+    if (error) {
+      console.log(error?.message);
+      toast.error(error?.message);
     }
     setBtnLoader(false);
   };

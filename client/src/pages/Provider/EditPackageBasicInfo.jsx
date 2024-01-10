@@ -78,7 +78,10 @@ const EditPackageBasicInfo = () => {
     const files = e.target.files;
     const allowedImageTypes = ["image/jpeg", "image/png"];
     const urls = [];
-    if (files.length < 1) return toast.error("add minimum one image");
+    if (files.length < 1) {
+      setExistCoverImages([]);
+      return toast.error("add minimum one image");
+    }
     if (files.length > 2) return toast.error("maximum two images allowed");
 
     for (let i = 0; i < files.length; i++) {
@@ -271,6 +274,9 @@ const EditPackageBasicInfo = () => {
                 and drop
               </p>
               <p className="my-2">PNG or JPG</p>
+              <p className="text-red-500 text-xs">
+                {errors.coverImage?.message}
+              </p>
               <div className="flex justify-center items-center gap-3">
                 {existCoverImages.length > 0 &&
                   existCoverImages.map((imgPath) => {

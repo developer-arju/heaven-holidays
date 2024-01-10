@@ -119,6 +119,7 @@ const options = {
 
 const ChartOne = () => {
   const { authData } = useSelector((state) => state.provider);
+  const [loaded, setLoaded] = useState(false);
   const [years, setYears] = useState([0, 0]);
   const [series, setSeries] = useState([]);
   useEffect(() => {
@@ -127,11 +128,16 @@ const ChartOne = () => {
       const { data, error } = await getRequest("/provider/chart");
       if (data) {
         console.log(data);
+        const maxAmount = Math.max(...data.result);
+        if (maxAmount > options.yaxis.max) {
+          options.yaxis.max = maxAmount;
+        }
         if (data.currYear < data.adjYear) {
           setYears([data.currYear, data.adjYear]);
         } else if (data.currYear > data.adjYear) {
           setYears([data.adjYear, data.currYear]);
         }
+        setLoaded(true);
         setSeries([{ name: "revenue", data: data.result }]);
       }
       if (error) {
@@ -158,12 +164,14 @@ const ChartOne = () => {
 
       <div>
         <div id="chartOne" className="-ml-5">
-          <ReactApexChart
-            options={options}
-            series={series}
-            type="area"
-            height={350}
-          />
+          {loaded && (
+            <ReactApexChart
+              options={options}
+              series={series}
+              type="area"
+              height={350}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -11,15 +11,20 @@ import Footer from "../components/Footer";
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
   const { authData } = useSelector((state) => state.user);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     (async () => {
       setAccessToken(authData.token);
       const { data, error } = await getRequest("/users/bookings");
       if (data) {
+        if (data?.length < 1) {
+          setNotFound(true);
+        }
         setBookings(data);
       }
       if (error) {
+        setNotFound(true);
         console.log(error);
         toast.error(error.message);
       }
@@ -120,7 +125,11 @@ const Bookings = () => {
             })}
         </div>
       )}
-
+      {notFound && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 bg-whiter rounded-md shadow-4">
+          <p className="text-xl font-body font-medium">You have no bookings</p>
+        </div>
+      )}
       <div className="absolute bottom-0 left-0 right-0 bg-bg-1">
         <Footer />
       </div>

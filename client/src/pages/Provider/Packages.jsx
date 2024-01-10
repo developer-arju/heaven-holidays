@@ -76,7 +76,7 @@ const Packages = () => {
     return () => {
       for (let i = 1; i <= totalPages; i++) {
         if (pagination.current) {
-          const child = pagination.current.querySelector(`:nth-child(${i})`);
+          const child = pagination.current.querySelector(":last-child");
           if (child) {
             child.removeEventListener("click", pageClick);
             child.remove();

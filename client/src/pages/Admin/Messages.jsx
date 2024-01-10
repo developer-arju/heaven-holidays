@@ -27,7 +27,6 @@ const Messages = ({ socket }) => {
       setLoading(true);
       setAccessToken(authData.token);
       const { data, error } = await getRequest("/admin/messages");
-      setLoading(false);
       if (data) {
         if (chatId) {
           data.forEach((chat) => {
@@ -36,10 +35,13 @@ const Messages = ({ socket }) => {
             }
           });
         }
-        setChats([...data]);
+        const sortedChats = sortChats(data);
+        setChats([...sortedChats]);
+        setLoading(false);
       }
       if (error) {
-        console.log(error);
+        setLoading(false);
+        console.log(error?.message);
       }
     })();
   }, []);
@@ -47,29 +49,18 @@ const Messages = ({ socket }) => {
   useEffect(() => {
     const msgBox = document.querySelector("#show-msg");
     msgBox?.scrollTo(0, msgBox.scrollHeight);
-  }, [chats]);
+  }, [activeChat]);
 
   useEffect(() => {
     socket.on("send-message", (data) => {
       setChats((prev) => {
-        return prev.map((chat) => {
+        prev.forEach((chat) => {
           if (chat.clientId._id === data.clientId) {
             chat.messages = data.messages;
-            return chat;
           }
-          return chat;
         });
-      });
-    });
-    socket.on("reply-response", (data) => {
-      setChats((prev) => {
-        return prev.map((chat) => {
-          if (chat._id === data._id) {
-            chat.messages = data.messages;
-            return chat;
-          }
-          return chat;
-        });
+        const sortedChats = sortChats(prev);
+        return sortedChats;
       });
     });
     socket.on("online-users", (data) => {
@@ -83,18 +74,43 @@ const Messages = ({ socket }) => {
     });
   }, [socket]);
 
-  useEffect(() => {
-    console.log(onlineUsers);
-  }, [onlineUsers]);
-
   const sendMessage = async () => {
     await socket.emit("reply-message", {
       text,
       chatId: activeChat._id,
       clientId: activeChat.clientId._id,
     });
+    setChats((prev) => {
+      prev.forEach((chat) => {
+        if (chat._id === activeChat._id) {
+          chat.messages.push({
+            sender: "admin",
+            text,
+            timestamp: Date.now(),
+          });
+        }
+      });
+      const sortedChats = sortChats(prev);
+      return sortedChats;
+    });
     setText("");
   };
+
+  function sortChats(data) {
+    for (let i = 0; i < data.length - 1; i++) {
+      let timestampA = data[i].messages[data[i].messages.length - 1].timestamp;
+      let timestampB =
+        data[i + 1].messages[data[i + 1].messages.length - 1].timestamp;
+      timestampA = new Date(timestampA);
+      timestampB = new Date(timestampB);
+      if (timestampA - timestampB < 0) {
+        const temp = data[i];
+        data[i] = data[i + 1];
+        data[i + 1] = temp;
+      }
+    }
+    return data;
+  }
 
   return (
     <div className="grid md:grid-cols-[2fr_3fr] h-[480px] gap-2 mt-4">

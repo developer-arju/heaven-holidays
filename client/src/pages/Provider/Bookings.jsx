@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { CiMenuFries } from "react-icons/ci";
-import { MdPublishedWithChanges } from "react-icons/md";
+import { MdOutlineDocumentScanner } from "react-icons/md";
 import { getRequest, postRequest, setAccessToken } from "../../utils/axios";
+import { BsFillCaretLeftFill, BsFillCaretRightFill } from "react-icons/bs";
 
 const TOOLTIP_STYLE = {
   paddingLeft: "8px",
@@ -20,12 +21,19 @@ const TOOLTIP_STYLE = {
 const Bookings = () => {
   const { authData } = useSelector((state) => state.provider);
   const [bookings, setBookings] = useState([]);
+  const [currPage, setCurrPage] = useState(1);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const pagination = useRef(null);
+  const totalPages = useMemo(() => {
+    return Math.ceil(bookings.length / 5);
+  }, [bookings]);
 
   useEffect(() => {
     (async () => {
       setAccessToken(authData.token);
       const { data, error } = await getRequest("/provider/bookings");
       if (data) {
+        setIsLoaded(true);
         setBookings([...data]);
       }
       if (error) {
@@ -33,6 +41,40 @@ const Bookings = () => {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    for (let i = 1; i <= totalPages; i++) {
+      let child = document.createElement("p");
+      child.onclick = pageClick;
+      child.textContent = i;
+      if (currPage === i) {
+        child.className =
+          "border-b w-6 text-center text-base font-bold cursor-pointer rounded-t-sm bg-neutral-100 shadow-inner border-black";
+      } else {
+        child.className =
+          "border-b w-6 text-center text-base font-bold cursor-pointer border-gray-400";
+      }
+      pagination.current.appendChild(child);
+    }
+
+    return () => {
+      for (let i = 1; i <= totalPages; i++) {
+        if (pagination.current) {
+          const child = pagination.current.querySelector(":last-child");
+          if (child) {
+            child.removeEventListener("click", pageClick);
+            child.remove();
+          }
+        }
+      }
+    };
+  }, [totalPages, currPage]);
+
+  function pageClick(e) {
+    e.stopPropagation();
+    const pageNumber = parseInt(e.target.textContent);
+    setCurrPage(pageNumber);
+  }
 
   const showHandler = (e) => {
     e.preventDefault();
@@ -95,15 +137,17 @@ const Bookings = () => {
               <th scope="col" className="px-6 py-4">
                 Amount
               </th>
-              <th scope="col" className="px-6 py-4">
-                Actions
-              </th>
+              <th scope="col" className="px-6 py-4"></th>
+              <th scope="col" className="px-6 py-4"></th>
             </tr>
           </thead>
           <tbody>
             {bookings.length > 0 &&
-              bookings.map((booking) => {
+              bookings.map((booking, index) => {
                 const bookingDate = new Date(booking.startDate);
+                if ((currPage - 1) * 5 > index || currPage * 5 < index + 1) {
+                  return;
+                }
                 return (
                   <tr key={booking._id} className="border-b">
                     <td className="whitespace-nowrap px-6 py-4 font-medium">
@@ -123,7 +167,13 @@ const Bookings = () => {
                       })}
                     </td>
 
-                    <td className="whitespace-nowrap font-normal px-6 py-4">
+                    <td
+                      className={
+                        booking.status === "complete"
+                          ? "whitespace-nowrap font-normal px-6 py-4 text-green-500"
+                          : "whitespace-nowrap font-normal px-6 py-4"
+                      }
+                    >
                       {booking.status}
                     </td>
                     <td className="whitespace-nowrap font-normal px-6 py-4">
@@ -133,17 +183,17 @@ const Bookings = () => {
                       })}
                     </td>
 
-                    {/* <td className="whitespace-nowrap px-6 py-4">
-                      <Link to="#">
-                        <FaEdit className="text-base cursor-pointer focus:outline-none view-form" />
+                    <td className="whitespace-nowrap px-6 py-4">
+                      <Link to={`view/${booking._id}`}>
+                        <MdOutlineDocumentScanner className="text-base cursor-pointer focus:outline-none view-form" />
                       </Link>
                       <Tooltip
                         style={TOOLTIP_STYLE}
                         place="bottom-end"
                         anchorSelect=".view-form"
-                        content="view/edit details"
+                        content="view booking details"
                       />
-                    </td> */}
+                    </td>
                     <td className="whitespace-nowrap px-6 py-4 flex justify-center items-center">
                       <div className="relative">
                         <button
@@ -190,26 +240,24 @@ const Bookings = () => {
               })}
           </tbody>
         </table>
-        {/* <div
-            id="isEmpty"
-            className="hidden w-full h-96 flex-col justify-center items-center bg-neutral-100 rounded-md shadow-md"
-          >
-            <h2 className="font-serif font-semibold text-2xl text-center text-primary">
-              Properties Not Found
-            </h2>
-            <div className="flex justify-center items-center gap-4">
-              <span className="text-sm font-title">
-                if you wish to add new property
-              </span>
-              <Link
-                to="/provider/properties/add"
-                className="outline-none font-body text-primary "
-              >
-                Click here
-              </Link>
-            </div>
-          </div> */}
       </div>
+      {bookings.length > 0 && isLoaded && (
+        <div className="flex justify-end items-center mr-8 mt-8">
+          <p className="w-6 text-center text-base font-bold ">
+            <BsFillCaretLeftFill
+              onClick={() => currPage > 1 && setCurrPage(currPage - 1)}
+              className="mx-auto cursor-pointer"
+            />
+          </p>
+          <div className="flex items-center" ref={pagination}></div>
+          <p className="w-6 text-center text-base font-bold ">
+            <BsFillCaretRightFill
+              onClick={() => currPage < totalPages && setCurrPage(currPage + 1)}
+              className="mx-auto cursor-pointer"
+            />
+          </p>
+        </div>
+      )}
     </>
   );
 };

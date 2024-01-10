@@ -16,7 +16,7 @@ const port = process.env.PORT || 4000;
 connectDB();
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: process.env.FRONTEND_URI,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
@@ -25,7 +25,7 @@ const app = express();
 const server = createServer(app);
 export const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND_URI,
     credentials: true,
   },
 });
@@ -62,7 +62,6 @@ io.on("connection", (socket) => {
   socket.on("reply-message", async (data) => {
     const chat = await sendReply(data);
     if (chat instanceof Error === false) {
-      socket.emit("reply-response", chat);
       for (const socketId in connectedSockets) {
         if (connectedSockets[socketId] === data.clientId) {
           io.to(socketId).emit("from-admin", chat);
